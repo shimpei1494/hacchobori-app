@@ -1,93 +1,161 @@
-import Link from "next/link";
+"use client"
+
+import { useState } from "react"
+import { Search, MapPin } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { BottomNavigation } from "@/components/bottom-navigation"
+import { RestaurantCard } from "@/components/restaurant-card"
+
+// サンプルデータ
+const restaurants = [
+  {
+    id: 1,
+    name: "カフェ・ド・八丁堀",
+    category: "カフェ",
+    rating: 4.5,
+    price: "¥800-1,200",
+    distance: "2分",
+    address: "東京都中央区八丁堀2-1-1",
+    tabelog: "https://tabelog.com/tokyo/A1313/A131302/13001234/",
+    website: "https://cafe-hachobori.com",
+    tags: ["Wi-Fi", "禁煙", "テイクアウト"],
+    description: "落ち着いた雰囲気でランチタイムにぴったりのカフェです。",
+    isFavorite: false,
+  },
+  {
+    id: 2,
+    name: "八丁堀ラーメン横丁",
+    category: "ラーメン",
+    rating: 4.2,
+    price: "¥600-900",
+    distance: "5分",
+    address: "東京都中央区八丁堀3-2-5",
+    tabelog: "https://tabelog.com/tokyo/A1313/A131302/13005678/",
+    tags: ["カウンター席", "深夜営業"],
+    description: "昔ながらの味を守る老舗ラーメン店。",
+    isFavorite: true,
+  },
+  {
+    id: 3,
+    name: "オフィス街の定食屋",
+    category: "定食",
+    rating: 4.7,
+    price: "¥700-1,000",
+    distance: "3分",
+    address: "東京都中央区八丁堀1-5-3",
+    tabelog: "https://tabelog.com/tokyo/A1313/A131302/13009012/",
+    tags: ["ボリューム満点", "日替わり"],
+    description: "サラリーマンに人気の定食屋。ボリューム満点でコスパ抜群！",
+    isFavorite: false,
+  },
+  {
+    id: 4,
+    name: "イタリアン・ビストロ",
+    category: "イタリアン",
+    rating: 4.3,
+    price: "¥1,200-1,800",
+    distance: "7分",
+    address: "東京都中央区八丁堀4-1-8",
+    website: "https://italian-bistro-hachobori.jp",
+    tags: ["パスタ", "ワイン", "おしゃれ"],
+    description: "本格的なイタリアンが楽しめるビストロ。",
+    isFavorite: false,
+  },
+]
 
 export default function HomePage() {
-	return (
-		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-			<div className="container mx-auto px-4 py-16">
-				{/* Header */}
-				<div className="text-center mb-16">
-					<h1 className="text-4xl font-bold text-gray-900 mb-4">
-						八丁堀ランチアプリ
-					</h1>
-					<p className="text-xl text-gray-600 mb-8">
-						八丁堀エリアのランチ情報管理システム
-					</p>
-					<div className="flex justify-center gap-4">
-						<Link
-							href="/login"
-							className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 flex items-center gap-2"
-						>
-							ログイン
-							<span>→</span>
-						</Link>
-					</div>
-				</div>
+  const [searchQuery, setSearchQuery] = useState("")
+  const [activeTab, setActiveTab] = useState("discover")
 
-				{/* Features */}
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-					<div className="bg-white rounded-lg shadow-md p-6">
-						<div className="mb-4">
-							<h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-2">
-								<span className="text-blue-600">🍱</span>
-								レストラン管理
-							</h3>
-							<p className="text-gray-600 text-sm">
-								八丁堀エリアのレストラン情報を一元管理
-							</p>
-						</div>
-						<div>
-							<ul className="text-sm text-gray-600 space-y-1">
-								<li>• レストラン情報の登録・編集</li>
-								<li>• 営業時間・定休日管理</li>
-								<li>• カテゴリ分類</li>
-							</ul>
-						</div>
-					</div>
+  const filteredRestaurants = restaurants.filter(
+    (restaurant) =>
+      restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      restaurant.category.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
 
-					<div className="bg-white rounded-lg shadow-md p-6">
-						<div className="mb-4">
-							<h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-2">
-								<span className="text-green-600">🍽️</span>
-								メニュー管理
-							</h3>
-							<p className="text-gray-600 text-sm">
-								ランチメニューと価格情報の管理
-							</p>
-						</div>
-						<div>
-							<ul className="text-sm text-gray-600 space-y-1">
-								<li>• 日替わりメニュー登録</li>
-								<li>• 価格情報管理</li>
-								<li>• メニュー写真アップロード</li>
-							</ul>
-						</div>
-					</div>
+  return (
+    <div className="min-h-screen bg-background pb-20">
+      {/* ヘッダー */}
+      <header className="bg-card border-b border-border sticky top-0 z-10">
+        <div className="px-4 py-4">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-2xl font-bold text-primary">🍱 八丁堀ランチ</h1>
+              <p className="text-sm text-muted-foreground">美味しいランチを見つけよう</p>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin className="w-4 h-4" />
+              <span>八丁堀駅周辺</span>
+            </div>
+          </div>
 
-					<div className="bg-white rounded-lg shadow-md p-6">
-						<div className="mb-4">
-							<h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-2">
-								<span className="text-purple-600">⭐</span>
-								レビュー管理
-							</h3>
-							<p className="text-gray-600 text-sm">
-								ユーザーレビューと評価の管理
-							</p>
-						</div>
-						<div>
-							<ul className="text-sm text-gray-600 space-y-1">
-								<li>• レビュー投稿・編集</li>
-								<li>• 評価システム</li>
-								<li>• おすすめ度管理</li>
-							</ul>
-						</div>
-					</div>
-				</div>
+          {/* 検索バー */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              placeholder="レストランや料理を検索..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-background"
+            />
+          </div>
+        </div>
+      </header>
 
-				{/* Footer */}
-				<div className="text-center text-gray-500">
-					<p>&copy; 2024 八丁堀ランチアプリ. All rights reserved.</p>
-				</div>
-			</div>
-		</div>
-	);
+      {/* メインコンテンツ */}
+      <main className="px-4 py-6">
+        {/* 統計カード */}
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          <Card className="text-center">
+            <CardContent className="p-3">
+              <div className="text-2xl font-bold text-primary">24</div>
+              <div className="text-xs text-muted-foreground">登録店舗</div>
+            </CardContent>
+          </Card>
+          <Card className="text-center">
+            <CardContent className="p-3">
+              <div className="text-2xl font-bold text-secondary">12</div>
+              <div className="text-xs text-muted-foreground">お気に入り</div>
+            </CardContent>
+          </Card>
+          <Card className="text-center">
+            <CardContent className="p-3">
+              <div className="text-2xl font-bold text-accent">4.3</div>
+              <div className="text-xs text-muted-foreground">平均評価</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* カテゴリーフィルター */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {["すべて", "カフェ", "ラーメン", "定食", "イタリアン", "和食", "中華"].map((category) => (
+            <Badge
+              key={category}
+              variant={category === "すべて" ? "default" : "secondary"}
+              className="whitespace-nowrap cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+            >
+              {category}
+            </Badge>
+          ))}
+        </div>
+
+        {/* レストランリスト */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">おすすめのお店</h2>
+            <span className="text-sm text-muted-foreground">{filteredRestaurants.length}件見つかりました</span>
+          </div>
+
+          {filteredRestaurants.map((restaurant) => (
+            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+          ))}
+        </div>
+      </main>
+
+      {/* ボトムナビゲーション */}
+      <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+    </div>
+  )
 }

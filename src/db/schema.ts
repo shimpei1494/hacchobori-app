@@ -6,7 +6,8 @@ import {
 	timestamp,
 	boolean,
 	integer,
-	jsonb,
+	primaryKey,
+	numeric,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -17,12 +18,11 @@ export const users = pgTable("users", {
 	email: varchar("email", { length: 255 }).notNull().unique(),
 	emailVerified: boolean("email_verified").notNull().default(false),
 	image: text("image"),
-	createdAt: timestamp("created_at")
-		.notNull()
-		.$defaultFn(() => new Date()),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at")
 		.notNull()
-		.$defaultFn(() => new Date()),
+		.defaultNow()
+		.$onUpdate(() => new Date()),
 });
 
 export const sessions = pgTable("sessions", {
@@ -33,12 +33,11 @@ export const sessions = pgTable("sessions", {
 	userId: uuid("user_id")
 		.notNull()
 		.references(() => users.id, { onDelete: "cascade" }),
-	createdAt: timestamp("created_at")
-		.notNull()
-		.$defaultFn(() => new Date()),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at")
 		.notNull()
-		.$defaultFn(() => new Date()),
+		.defaultNow()
+		.$onUpdate(() => new Date()),
 });
 
 export const accounts = pgTable("accounts", {
@@ -53,12 +52,11 @@ export const accounts = pgTable("accounts", {
 	idToken: text("id_token"),
 	expiresAt: timestamp("expires_at"),
 	password: text("password"),
-	createdAt: timestamp("created_at")
-		.notNull()
-		.$defaultFn(() => new Date()),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at")
 		.notNull()
-		.$defaultFn(() => new Date()),
+		.defaultNow()
+		.$onUpdate(() => new Date()),
 });
 
 export const verifications = pgTable("verifications", {
@@ -66,20 +64,84 @@ export const verifications = pgTable("verifications", {
 	identifier: text("identifier").notNull(),
 	value: text("value").notNull(),
 	expiresAt: timestamp("expires_at").notNull(),
-	createdAt: timestamp("created_at")
-		.notNull()
-		.$defaultFn(() => new Date()),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at")
 		.notNull()
-		.$defaultFn(() => new Date()),
+		.defaultNow()
+		.$onUpdate(() => new Date()),
 });
 
-// Application-specific tables will be added here for lunch management
+// Application-specific tables for lunch management
+
+// categories テーブル (カフェ、ラーメン、定食、イタリアン、和食、中華、海鮮など)
+export const categories = pgTable("categories", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	name: varchar("name", { length: 100 }).notNull().unique(),
+	slug: varchar("slug", { length: 100 }).notNull().unique(),
+	displayOrder: integer("display_order").notNull().default(0),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// restaurants テーブル
+export const restaurants = pgTable("restaurants", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	name: varchar("name", { length: 255 }).notNull(),
+	rating: numeric("rating", { precision: 2, scale: 1 }), // 0.0 ~ 5.0
+	priceMin: integer("price_min"), // 最低価格(円)
+	priceMax: integer("price_max"), // 最高価格(円)
+	distance: varchar("distance", { length: 50 }), // "2分", "5分"など
+	address: text("address"),
+	tabelogUrl: text("tabelog_url"),
+	websiteUrl: text("website_url"),
+	description: text("description"),
+	imageUrl: text("image_url"),
+	isActive: boolean("is_active").notNull().default(true),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at")
+		.notNull()
+		.defaultNow()
+		.$onUpdate(() => new Date()),
+});
+
+// restaurant_categories (多対多中間テーブル)
+export const restaurantCategories = pgTable(
+	"restaurant_categories",
+	{
+		restaurantId: uuid("restaurant_id")
+			.notNull()
+			.references(() => restaurants.id, { onDelete: "cascade" }),
+		categoryId: uuid("category_id")
+			.notNull()
+			.references(() => categories.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+	},
+	(table) => [
+		primaryKey({ columns: [table.restaurantId, table.categoryId] }),
+	],
+);
+
+// favorites (お気に入り)
+export const favorites = pgTable(
+	"favorites",
+	{
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		restaurantId: uuid("restaurant_id")
+			.notNull()
+			.references(() => restaurants.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at").notNull().defaultNow(),
+	},
+	(table) => [
+		primaryKey({ columns: [table.userId, table.restaurantId] }),
+	],
+);
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
 	sessions: many(sessions),
 	accounts: many(accounts),
+	favorites: many(favorites),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -93,5 +155,39 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 	user: one(users, {
 		fields: [accounts.userId],
 		references: [users.id],
+	}),
+}));
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+	restaurantCategories: many(restaurantCategories),
+}));
+
+export const restaurantsRelations = relations(restaurants, ({ many }) => ({
+	restaurantCategories: many(restaurantCategories),
+	favorites: many(favorites),
+}));
+
+export const restaurantCategoriesRelations = relations(
+	restaurantCategories,
+	({ one }) => ({
+		restaurant: one(restaurants, {
+			fields: [restaurantCategories.restaurantId],
+			references: [restaurants.id],
+		}),
+		category: one(categories, {
+			fields: [restaurantCategories.categoryId],
+			references: [categories.id],
+		}),
+	}),
+);
+
+export const favoritesRelations = relations(favorites, ({ one }) => ({
+	user: one(users, {
+		fields: [favorites.userId],
+		references: [users.id],
+	}),
+	restaurant: one(restaurants, {
+		fields: [favorites.restaurantId],
+		references: [restaurants.id],
 	}),
 }));

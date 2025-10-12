@@ -191,3 +191,51 @@ export const favoritesRelations = relations(favorites, ({ one }) => ({
 		references: [restaurants.id],
 	}),
 }));
+
+// ============================================
+// Type Exports (Inferred from Schema)
+// ============================================
+
+import type { InferSelectModel, InferInsertModel } from "drizzle-orm";
+
+// User types
+export type User = InferSelectModel<typeof users>;
+export type NewUser = InferInsertModel<typeof users>;
+
+export type Session = InferSelectModel<typeof sessions>;
+export type NewSession = InferInsertModel<typeof sessions>;
+
+export type Account = InferSelectModel<typeof accounts>;
+export type NewAccount = InferInsertModel<typeof accounts>;
+
+export type Verification = InferSelectModel<typeof verifications>;
+export type NewVerification = InferInsertModel<typeof verifications>;
+
+// Application types
+export type Category = InferSelectModel<typeof categories>;
+export type NewCategory = InferInsertModel<typeof categories>;
+
+export type Restaurant = InferSelectModel<typeof restaurants>;
+export type NewRestaurant = InferInsertModel<typeof restaurants>;
+
+export type RestaurantCategory = InferSelectModel<typeof restaurantCategories>;
+export type NewRestaurantCategory = InferInsertModel<
+	typeof restaurantCategories
+>;
+
+export type Favorite = InferSelectModel<typeof favorites>;
+export type NewFavorite = InferInsertModel<typeof favorites>;
+
+// Relational types for query results
+export type RestaurantWithCategories = Restaurant & {
+	restaurantCategories: Array<{
+		category: Category;
+	}>;
+};
+
+export type RestaurantWithFull = Restaurant & {
+	restaurantCategories: Array<{
+		category: Category;
+	}>;
+	favorites: Favorite[];
+};

@@ -10,26 +10,28 @@ const isNeonUrl =
 	env.DATABASE_URL.includes("neon.db") ||
 	env.DATABASE_URL.includes("neondb.net");
 
-let db: ReturnType<typeof drizzle> | ReturnType<typeof neonDrizzle>;
-let migrationClient: postgres.Sql | Pool;
+// Create typed db instance
+const createDb = () => {
+	if (isNeonUrl) {
+		// Neon Serverless configuration
+		neonConfig.fetchConnectionCache = true;
+		const pool = new Pool({ connectionString: env.DATABASE_URL });
+		return neonDrizzle(pool, { schema });
+	}
 
-if (isNeonUrl) {
-	// Neon Serverless configuration
-	neonConfig.fetchConnectionCache = true;
-
-	const pool = new Pool({ connectionString: env.DATABASE_URL });
-	db = neonDrizzle(pool, { schema });
-	migrationClient = pool;
-} else {
 	// Regular PostgreSQL configuration
 	const client = postgres(env.DATABASE_URL, {
 		max: 1,
 		onnotice: env.NODE_ENV === "development" ? console.log : undefined,
 	});
+	return drizzle(client, { schema });
+};
 
-	db = drizzle(client, { schema });
-	migrationClient = client;
-}
+export const db = createDb();
 
-export { db, migrationClient };
+// Migration client for backwards compatibility
+export const migrationClient = isNeonUrl
+	? new Pool({ connectionString: env.DATABASE_URL })
+	: postgres(env.DATABASE_URL, { max: 1 });
+
 export type Database = typeof db;

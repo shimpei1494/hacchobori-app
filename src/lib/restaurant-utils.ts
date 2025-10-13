@@ -11,34 +11,27 @@ import type { RestaurantWithCategories } from "@/db/schema";
  * 価格範囲をフォーマット
  * @example formatPrice(800, 1200) => "¥800-1,200"
  */
-export function formatPrice(
-	priceMin: number | null,
-	priceMax: number | null,
-): string {
-	if (!priceMin || !priceMax) {
-		return "価格未定";
-	}
-	return `¥${priceMin.toLocaleString()}-${priceMax.toLocaleString()}`;
+export function formatPrice(priceMin: number | null, priceMax: number | null): string {
+  if (!priceMin || !priceMax) {
+    return "価格未定";
+  }
+  return `¥${priceMin.toLocaleString()}-${priceMax.toLocaleString()}`;
 }
 
 /**
  * レストランの主カテゴリ名を取得
  * @example getPrimaryCategory(restaurant) => "カフェ"
  */
-export function getPrimaryCategory(
-	restaurant: RestaurantWithCategories,
-): string {
-	return restaurant.restaurantCategories[0]?.category.name || "未分類";
+export function getPrimaryCategory(restaurant: RestaurantWithCategories): string {
+  return restaurant.restaurantCategories[0]?.category.name || "未分類";
 }
 
 /**
  * レストランの全カテゴリ名を配列で取得
  * @example getCategoryNames(restaurant) => ["カフェ", "禁煙", "Wi-Fi"]
  */
-export function getCategoryNames(
-	restaurant: RestaurantWithCategories,
-): string[] {
-	return restaurant.restaurantCategories.map((rc) => rc.category.name);
+export function getCategoryNames(restaurant: RestaurantWithCategories): string[] {
+  return restaurant.restaurantCategories.map((rc) => rc.category.name);
 }
 
 /**
@@ -46,7 +39,7 @@ export function getCategoryNames(
  * @example getTags(restaurant) => ["カフェ", "禁煙", "Wi-Fi"]
  */
 export function getTags(restaurant: RestaurantWithCategories): string[] {
-	return getCategoryNames(restaurant);
+  return getCategoryNames(restaurant);
 }
 
 /**
@@ -54,7 +47,7 @@ export function getTags(restaurant: RestaurantWithCategories): string[] {
  * Drizzleのnumeric型はstring | nullで返されるため、numberに変換
  */
 export function parseRating(rating: string | null): number | null {
-	if (!rating) return null;
-	const parsed = Number(rating);
-	return Number.isNaN(parsed) ? null : parsed;
+  if (!rating) return null;
+  const parsed = Number(rating);
+  return Number.isNaN(parsed) ? null : parsed;
 }

@@ -1,10 +1,5 @@
 import { db } from "./db";
-import {
-	users,
-	categories,
-	restaurants,
-	restaurantCategories,
-} from "./schema";
+import { users, categories, restaurants, restaurantCategories } from "./schema";
 
 async function seed() {
 	try {

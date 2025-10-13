@@ -8,9 +8,6 @@ export default async function HomePage() {
 	]);
 
 	return (
-		<HomePageClient
-			initialRestaurants={restaurants}
-			categories={categories}
-		/>
+		<HomePageClient initialRestaurants={restaurants} categories={categories} />
 	);
 }

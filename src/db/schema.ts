@@ -115,9 +115,7 @@ export const restaurantCategories = pgTable(
 			.references(() => categories.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 	},
-	(table) => [
-		primaryKey({ columns: [table.restaurantId, table.categoryId] }),
-	],
+	(table) => [primaryKey({ columns: [table.restaurantId, table.categoryId] })],
 );
 
 // favorites (お気に入り)
@@ -132,9 +130,7 @@ export const favorites = pgTable(
 			.references(() => restaurants.id, { onDelete: "cascade" }),
 		createdAt: timestamp("created_at").notNull().defaultNow(),
 	},
-	(table) => [
-		primaryKey({ columns: [table.userId, table.restaurantId] }),
-	],
+	(table) => [primaryKey({ columns: [table.userId, table.restaurantId] })],
 );
 
 // Relations

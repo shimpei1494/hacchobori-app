@@ -1,37 +1,39 @@
 {
-  "editor.formatOnSave": true,
-  "editor.insertSpaces": true,
-  "editor.tabSize": 2,
-  "files.autoSave": "onFocusChange",
+	"editor.formatOnSave": true,
+	"editor.insertSpaces": true,
+	"editor.tabSize": 2,
+	"files.autoSave": "onFocusChange",
 
-  // 共通のコードアクション設定
-  "editor.codeActionsOnSave": {
-    "source.organizeImports.biome": "explicit"
-  },
-  // Biome設定
-  "biome.lsp.bin": "node_modules/@biomejs/biome/bin/biome",
-  // 既定フォーマッタをBiomeに
-  "editor.defaultFormatter": "biomejs.biome",
-  "[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
-  "[typescript]": { "editor.defaultFormatter": "vscode.typescript-language-features" },
-  "[javascriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
-  "[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
-  "[json]": { "editor.defaultFormatter": "biomejs.biome" },
+	// 共通のコードアクション設定
+	"editor.codeActionsOnSave": {
+		"source.organizeImports.biome": "explicit"
+	},
+	// Biome設定
+	"biome.lsp.bin": "node_modules/@biomejs/biome/bin/biome",
+	// 既定フォーマッタをBiomeに
+	"editor.defaultFormatter": "biomejs.biome",
+	"[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[typescript]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
+	"[javascriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+	"[json]": { "editor.defaultFormatter": "biomejs.biome" },
 
-  // プロジェクトに biome.json がないと動かさない（誤作動防止）
-  "biome.requireConfiguration": true,
+	// プロジェクトに biome.json がないと動かさない（誤作動防止）
+	"biome.requireConfiguration": true,
 
-  // TypeScript設定
-  "typescript.preferences.includePackageJsonAutoImports": "auto",
+	// TypeScript設定
+	"typescript.preferences.includePackageJsonAutoImports": "auto",
 
-  // ファイル除外設定
-  "files.exclude": {
-    "**/node_modules": true,
-    "**/.next": true,
-    "**/drizzle": false
-  },
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/.next": true
-  }
+	// ファイル除外設定
+	"files.exclude": {
+		"**/node_modules": true,
+		"**/.next": true,
+		"**/drizzle": false
+	},
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/.next": true
+	}
 }

@@ -48,7 +48,9 @@ export function HomePageClient({
 				<div className="px-4 py-4">
 					<div className="flex items-center justify-between mb-4">
 						<div>
-							<h1 className="text-2xl font-bold text-primary">🍱 八丁堀ランチ</h1>
+							<h1 className="text-2xl font-bold text-primary">
+								🍱 八丁堀ランチ
+							</h1>
 							<p className="text-sm text-muted-foreground">
 								美味しいランチを見つけよう
 							</p>

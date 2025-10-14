@@ -6,21 +6,24 @@ import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { createRestaurant } from "@/app/actions/restaurants";
+
+import { createRestaurant, type RestaurantActionResult, updateRestaurant } from "@/app/actions/restaurants";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { Category } from "@/db/schema";
+import type { Category, RestaurantWithCategories } from "@/db/schema";
 import { type RestaurantFormData, restaurantFormSchema } from "@/lib/validations/restaurant";
 
 interface RestaurantFormProps {
   categories: Category[];
+  initialData?: RestaurantWithCategories;
+  mode?: "create" | "edit";
 }
 
-export function RestaurantForm({ categories }: RestaurantFormProps) {
+export function RestaurantForm({ categories, initialData, mode = "create" }: RestaurantFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,8 +39,18 @@ export function RestaurantForm({ categories }: RestaurantFormProps) {
   } = useForm<RestaurantFormData>({
     resolver: zodResolver(restaurantFormSchema),
     defaultValues: {
-      categoryIds: [],
-      isActive: true,
+      name: initialData?.name || "",
+      rating: initialData?.rating || "",
+      priceMin: initialData?.priceMin?.toString() || "",
+      priceMax: initialData?.priceMax?.toString() || "",
+      distance: initialData?.distance || "",
+      address: initialData?.address || "",
+      tabelogUrl: initialData?.tabelogUrl || "",
+      websiteUrl: initialData?.websiteUrl || "",
+      description: initialData?.description || "",
+      imageUrl: initialData?.imageUrl || "",
+      categoryIds: initialData?.restaurantCategories?.map((rc) => rc.category.id) || [],
+      isActive: initialData?.isActive ?? true,
     },
   });
 
@@ -67,10 +80,15 @@ export function RestaurantForm({ categories }: RestaurantFormProps) {
         isActive: data.isActive,
       };
 
-      const result = await createRestaurant(restaurantData, data.categoryIds);
+      let result: RestaurantActionResult;
+      if (mode === "edit" && initialData) {
+        result = await updateRestaurant(initialData.id, restaurantData, data.categoryIds);
+      } else {
+        result = await createRestaurant(restaurantData, data.categoryIds);
+      }
 
       if (result.success) {
-        toast.success("レストランを追加しました");
+        toast.success(mode === "edit" ? "レストランを更新しました" : "レストランを追加しました");
         router.push("/");
         router.refresh();
       } else {
@@ -338,7 +356,13 @@ export function RestaurantForm({ categories }: RestaurantFormProps) {
           キャンセル
         </Button>
         <Button type="submit" disabled={isSubmitting} className="flex-1" size="lg">
-          {isSubmitting ? "追加中..." : "レストランを追加"}
+          {isSubmitting
+            ? mode === "edit"
+              ? "更新中..."
+              : "追加中..."
+            : mode === "edit"
+              ? "変更を保存"
+              : "レストランを追加"}
         </Button>
       </div>
     </form>

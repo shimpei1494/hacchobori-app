@@ -1,6 +1,7 @@
 "use client";
 
-import { Clock, ExternalLink, Heart, MapPin, Star } from "lucide-react";
+import { Clock, Edit, ExternalLink, Heart, MapPin, Star } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -75,35 +76,44 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           ))}
         </div>
 
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={openGoogleMaps} className="flex-1 bg-transparent">
-            <MapPin className="w-4 h-4 mr-1" />
-            地図で見る
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={openGoogleMaps} className="flex-1 bg-transparent">
+              <MapPin className="w-4 h-4 mr-1" />
+              地図で見る
+            </Button>
+
+            {restaurant.tabelogUrl && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open(restaurant.tabelogUrl ?? "", "_blank")}
+                className="flex-1"
+              >
+                <ExternalLink className="w-4 h-4 mr-1" />
+                食べログ
+              </Button>
+            )}
+
+            {restaurant.websiteUrl && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open(restaurant.websiteUrl ?? "", "_blank")}
+                className="flex-1"
+              >
+                <ExternalLink className="w-4 h-4 mr-1" />
+                HP
+              </Button>
+            )}
+          </div>
+
+          <Button variant="secondary" size="sm" asChild className="w-full">
+            <Link href={`/restaurants/${restaurant.id}/edit`} prefetch={false}>
+              <Edit className="w-4 h-4 mr-1" />
+              編集
+            </Link>
           </Button>
-
-          {restaurant.tabelogUrl && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.open(restaurant.tabelogUrl ?? "", "_blank")}
-              className="flex-1"
-            >
-              <ExternalLink className="w-4 h-4 mr-1" />
-              食べログ
-            </Button>
-          )}
-
-          {restaurant.websiteUrl && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.open(restaurant.websiteUrl ?? "", "_blank")}
-              className="flex-1"
-            >
-              <ExternalLink className="w-4 h-4 mr-1" />
-              HP
-            </Button>
-          )}
         </div>
       </CardContent>
     </Card>

@@ -194,3 +194,64 @@ export async function updateRestaurant(
     };
   }
 }
+
+/**
+ * レストランの営業状態を切り替え（閉店/営業中）
+ */
+export async function toggleRestaurantActive(id: string, isActive: boolean): Promise<RestaurantActionResult> {
+  try {
+    const [updatedRestaurant] = await db
+      .update(restaurants)
+      .set({
+        isActive,
+        updatedAt: new Date(),
+      })
+      .where(eq(restaurants.id, id))
+      .returning();
+
+    if (!updatedRestaurant) {
+      return {
+        success: false,
+        error: "レストランの更新に失敗しました",
+      };
+    }
+
+    // キャッシュを再検証
+    revalidatePath("/");
+    revalidatePath("/restaurants/closed");
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error("Failed to toggle restaurant active status:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "営業状態の更新中にエラーが発生しました",
+    };
+  }
+}
+
+/**
+ * 閉店したレストラン一覧を取得
+ */
+export async function getClosedRestaurants(): Promise<RestaurantWithCategories[]> {
+  try {
+    const result = await db.query.restaurants.findMany({
+      where: eq(restaurants.isActive, false),
+      with: {
+        restaurantCategories: {
+          with: {
+            category: true,
+          },
+        },
+      },
+      orderBy: [desc(restaurants.updatedAt)],
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Failed to fetch closed restaurants:", error);
+    return [];
+  }
+}

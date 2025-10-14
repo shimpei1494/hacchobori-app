@@ -1,8 +1,20 @@
 "use client";
 
-import { Clock, Edit, ExternalLink, Heart, MapPin, Star } from "lucide-react";
+import { Clock, Edit, ExternalLink, Heart, MapPin, Star, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
+import { toggleRestaurantActive } from "@/app/actions/restaurants";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +27,8 @@ interface RestaurantCardProps {
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const [isFavorite, setIsFavorite] = useState(false); // TODO: ユーザー認証実装後に対応
+  const [showCloseDialog, setShowCloseDialog] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
@@ -25,6 +39,21 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
   };
 
+  const handleCloseRestaurant = async () => {
+    setIsClosing(true);
+    const result = await toggleRestaurantActive(restaurant.id, false);
+
+    if (result.success) {
+      toast.success(`${restaurant.name}を閉店にしました`, {
+        description: "閉店店舗ページから復活できます",
+      });
+      setShowCloseDialog(false);
+    } else {
+      toast.error(result.error || "閉店処理に失敗しました");
+    }
+    setIsClosing(false);
+  };
+
   // ビュー層でデータを加工
   const primaryCategory = getPrimaryCategory(restaurant);
   const price = formatPrice(restaurant.priceMin, restaurant.priceMax);
@@ -33,7 +62,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
-      <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-4 border-b">
+      <div className="p-4 border-b">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
@@ -47,9 +76,25 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             </div>
             <h3 className="font-semibold text-lg text-balance">{restaurant.name}</h3>
           </div>
-          <Button variant="ghost" size="icon" onClick={toggleFavorite}>
-            <Heart className={`w-4 h-4 ${isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
-          </Button>
+          {/* アクションボタン（編集・閉店・お気に入り） */}
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+              <Link href={`/restaurants/${restaurant.id}/edit`} prefetch={false}>
+                <Edit className="w-4 h-4" />
+              </Link>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => setShowCloseDialog(true)}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={toggleFavorite}>
+              <Heart className={`w-4 h-4 ${isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -107,15 +152,28 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
               </Button>
             )}
           </div>
-
-          <Button variant="secondary" size="sm" asChild className="w-full">
-            <Link href={`/restaurants/${restaurant.id}/edit`} prefetch={false}>
-              <Edit className="w-4 h-4 mr-1" />
-              編集
-            </Link>
-          </Button>
         </div>
       </CardContent>
+
+      {/* 閉店確認ダイアログ */}
+      <AlertDialog open={showCloseDialog} onOpenChange={setShowCloseDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{restaurant.name}を閉店にしますか？</AlertDialogTitle>
+            <AlertDialogDescription>
+              この店舗は一覧に表示されなくなります。
+              <br />
+              後で「閉店店舗」ページから営業中に戻すこともできます。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isClosing}>キャンセル</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCloseRestaurant} disabled={isClosing}>
+              {isClosing ? "処理中..." : "閉店にする"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

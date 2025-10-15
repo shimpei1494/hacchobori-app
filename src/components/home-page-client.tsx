@@ -82,8 +82,8 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
         </div>
 
         {/* レストランリスト */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">おすすめのお店</h2>
             <span className="text-sm text-muted-foreground">{filteredRestaurants.length}件見つかりました</span>
           </div>
@@ -93,7 +93,9 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
               <p className="text-muted-foreground">該当するレストランが見つかりませんでした</p>
             </Card>
           ) : (
-            filteredRestaurants.map((restaurant) => <RestaurantCard key={restaurant.id} restaurant={restaurant} />)
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredRestaurants.map((restaurant) => <RestaurantCard key={restaurant.id} restaurant={restaurant} />)}
+            </div>
           )}
         </div>
       </main>

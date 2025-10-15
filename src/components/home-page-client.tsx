@@ -73,8 +73,12 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
             {allCategories.map((category) => (
               <Badge
                 key={category}
-                variant={category === selectedCategory ? "default" : "secondary"}
-                className="whitespace-nowrap cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                variant={category === selectedCategory ? "default" : "outline"}
+                className={`whitespace-nowrap cursor-pointer transition-colors ${
+                  category === selectedCategory
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
                 onClick={() => setSelectedCategory(category)}
               >
                 {category}

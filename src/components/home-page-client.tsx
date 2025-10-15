@@ -41,7 +41,7 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
       {/* ヘッダー */}
       <header className="bg-card border-b border-border sticky top-0 z-10">
         <div className="px-4 py-4">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-primary">🍱 八丁堀ランチ</h1>
               <p className="text-sm text-muted-foreground">美味しいランチを見つけよう</p>
@@ -51,36 +51,41 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
               <span>八丁堀駅周辺</span>
             </div>
           </div>
+        </div>
+      </header>
 
+      {/* 検索・フィルターエリア */}
+      <div className="sticky top-[73px] z-10 bg-background border-b border-border">
+        <div className="px-4 py-3 max-w-7xl mx-auto">
           {/* 検索バー */}
-          <div className="relative">
+          <div className="relative mb-3">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="レストランや料理を検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-background"
+              className="pl-10 bg-card"
             />
           </div>
+
+          {/* カテゴリーフィルター */}
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {allCategories.map((category) => (
+              <Badge
+                key={category}
+                variant={category === selectedCategory ? "default" : "secondary"}
+                className="whitespace-nowrap cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </Badge>
+            ))}
+          </div>
         </div>
-      </header>
+      </div>
 
       {/* メインコンテンツ */}
       <main className="px-4 py-6 max-w-7xl mx-auto">
-        {/* カテゴリーフィルター */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          {allCategories.map((category) => (
-            <Badge
-              key={category}
-              variant={category === selectedCategory ? "default" : "secondary"}
-              className="whitespace-nowrap cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category}
-            </Badge>
-          ))}
-        </div>
-
         {/* レストランリスト */}
         <div>
           <div className="flex items-center justify-between mb-4">

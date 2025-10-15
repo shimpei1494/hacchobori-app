@@ -5,7 +5,7 @@ import { useState } from "react";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { RestaurantCard } from "@/components/restaurant-card";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import type { Category, RestaurantWithCategories } from "@/db/schema";
 import { getCategoryNames, getPrimaryCategory } from "@/lib/restaurant-utils";
@@ -66,7 +66,7 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
       </header>
 
       {/* メインコンテンツ */}
-      <main className="px-4 py-6">
+      <main className="px-4 py-6 max-w-7xl mx-auto">
         {/* カテゴリーフィルター */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
           {allCategories.map((category) => (
@@ -94,7 +94,9 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredRestaurants.map((restaurant) => <RestaurantCard key={restaurant.id} restaurant={restaurant} />)}
+              {filteredRestaurants.map((restaurant) => (
+                <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+              ))}
             </div>
           )}
         </div>

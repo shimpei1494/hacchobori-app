@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { RestaurantWithCategories } from "@/db/schema";
-import { formatPrice, getPrimaryCategory, getTags, parseRating } from "@/lib/restaurant-utils";
+import { formatPrice, parseRating } from "@/lib/restaurant-utils";
 
 interface RestaurantCardProps {
   restaurant: RestaurantWithCategories;
@@ -55,9 +55,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   };
 
   // ビュー層でデータを加工
-  const primaryCategory = getPrimaryCategory(restaurant);
   const price = formatPrice(restaurant.priceMin, restaurant.priceMax);
-  const tags = getTags(restaurant);
   const rating = parseRating(restaurant.rating);
 
   return (
@@ -65,8 +63,12 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
       <div className="p-4 border-b">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <Badge className="bg-primary">{primaryCategory}</Badge>
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              {restaurant.restaurantCategories.map((rc) => (
+                <Badge key={rc.category.id} className="bg-primary">
+                  {rc.category.name}
+                </Badge>
+              ))}
               {rating && (
                 <div className="flex items-center gap-1 text-sm">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -101,7 +103,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
       <CardContent className="p-4">
         <p className="text-sm text-muted-foreground mb-3 text-pretty">{restaurant.description}</p>
 
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             {restaurant.distance && (
               <div className="flex items-center gap-1">
@@ -111,14 +113,6 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             )}
             <span className="font-medium text-primary">{price}</span>
           </div>
-        </div>
-
-        <div className="flex flex-wrap gap-1 mb-4">
-          {tags.map((tag) => (
-            <Badge key={tag} variant="outline" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
         </div>
 
         <div className="space-y-2">

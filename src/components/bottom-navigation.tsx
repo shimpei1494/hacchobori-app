@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, Heart, Plus, Search } from "lucide-react";
+import { Heart, Plus, Search } from "lucide-react";
 import Link from "next/link";
 
 interface BottomNavigationProps {
@@ -12,7 +12,6 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
   const tabs = [
     { id: "discover", label: "発見", icon: Search },
     { id: "add", label: "追加", icon: Plus, href: "/restaurants/new" },
-    { id: "closed", label: "閉店店舗", icon: Archive, href: "/restaurants/closed" },
     { id: "favorites", label: "お気に入り", icon: Heart },
   ];
 

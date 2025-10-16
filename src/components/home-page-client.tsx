@@ -1,11 +1,19 @@
 "use client";
 
-import { MapPin, Search } from "lucide-react";
+import { MapPin, MoreVertical, Search } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { RestaurantCard } from "@/components/restaurant-card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import type { Category, RestaurantWithCategories } from "@/db/schema";
 import { getCategoryNames, getPrimaryCategory } from "@/lib/restaurant-utils";
@@ -46,9 +54,26 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
               <h1 className="text-2xl font-bold text-primary">🍱 八丁堀ランチ</h1>
               <p className="text-sm text-muted-foreground">美味しいランチを見つけよう</p>
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <MapPin className="w-4 h-4" />
-              <span>八丁堀駅周辺</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="w-4 h-4" />
+                <span className="hidden sm:inline">八丁堀駅周辺</span>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9">
+                    <MoreVertical className="h-5 w-5" />
+                    <span className="sr-only">メニュー</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/restaurants/closed" className="cursor-pointer">
+                      閉店店舗
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>

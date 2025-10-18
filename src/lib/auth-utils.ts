@@ -23,8 +23,8 @@ export async function getServerSession(): Promise<AuthSession | null> {
     }
 
     return {
-      user: session.user,
-      session: session.session,
+      user: session.user as User,
+      session: session.session as Session,
     };
   } catch (error) {
     console.error("Failed to get server session:", error);
@@ -73,6 +73,66 @@ export async function getCurrentUserId(): Promise<string | null> {
 export async function isAuthenticated(): Promise<boolean> {
   const session = await getServerSession();
   return !!session;
+}
+
+/**
+ * Require company email registration
+ * Redirects to profile page if company email is not set
+ */
+export async function requireCompanyEmail(): Promise<AuthSession> {
+  const session = await requireAuth();
+
+  if (!session.user.companyEmail) {
+    redirect("/profile?requireCompanyEmail=true");
+  }
+
+  return session;
+}
+
+/**
+ * Server Action用: 認証チェック（ログインのみ）
+ * リダイレクトせず、エラーオブジェクトを返す
+ *
+ * @example
+ * const authResult = await validateAuth();
+ * if ('error' in authResult) {
+ *   return { success: false, error: authResult.error };
+ * }
+ * const { session } = authResult;
+ */
+export async function validateAuth(): Promise<{ session: AuthSession } | { error: string }> {
+  const session = await getServerSession();
+
+  if (!session) {
+    return { error: "ログインが必要です" };
+  }
+
+  return { session };
+}
+
+/**
+ * Server Action用: 認証チェック（ログイン + 会社アドレス）
+ * リダイレクトせず、エラーオブジェクトを返す
+ *
+ * @example
+ * const authResult = await validateAuthWithCompanyEmail();
+ * if ('error' in authResult) {
+ *   return { success: false, error: authResult.error };
+ * }
+ * const { session } = authResult;
+ */
+export async function validateAuthWithCompanyEmail(): Promise<{ session: AuthSession } | { error: string }> {
+  const session = await getServerSession();
+
+  if (!session) {
+    return { error: "ログインが必要です" };
+  }
+
+  if (!session.user.companyEmail) {
+    return { error: "会社用メールアドレスの登録が必要です" };
+  }
+
+  return { session };
 }
 
 /**

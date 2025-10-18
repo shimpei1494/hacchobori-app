@@ -1,10 +1,11 @@
 "use client";
 
 import { Clock, Edit, ExternalLink, Heart, MapPin, Star, X } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { toggleRestaurantActive } from "@/app/actions/restaurants";
+import { AuthRequiredDialog } from "@/components/auth/auth-required-dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { RestaurantWithCategories } from "@/db/schema";
+import { useAuth } from "@/hooks/use-auth";
 import { formatPrice, parseRating } from "@/lib/restaurant-utils";
 
 interface RestaurantCardProps {
@@ -26,12 +28,33 @@ interface RestaurantCardProps {
 }
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  const router = useRouter();
+  const { isAuthenticated, hasCompanyEmail } = useAuth();
   const [isFavorite, setIsFavorite] = useState(false); // TODO: ユーザー認証実装後に対応
   const [showCloseDialog, setShowCloseDialog] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [authDialogRequireCompanyEmail, setAuthDialogRequireCompanyEmail] = useState(false);
+
+  const handleEditClick = () => {
+    // ログイン & 会社アドレス登録チェック
+    if (!isAuthenticated || !hasCompanyEmail) {
+      setAuthDialogRequireCompanyEmail(!hasCompanyEmail);
+      setShowAuthDialog(true);
+      return;
+    }
+    router.push(`/restaurants/${restaurant.id}/edit`);
+  };
 
   const toggleFavorite = () => {
+    // ログインチェックのみ（会社アドレス不要）
+    if (!isAuthenticated) {
+      setAuthDialogRequireCompanyEmail(false);
+      setShowAuthDialog(true);
+      return;
+    }
     setIsFavorite(!isFavorite);
+    // TODO: お気に入りのServer Action呼び出し
   };
 
   const openGoogleMaps = () => {
@@ -80,10 +103,8 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </div>
           {/* アクションボタン（編集・閉店・お気に入り） */}
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
-              <Link href={`/restaurants/${restaurant.id}/edit`} prefetch={false}>
-                <Edit className="w-4 h-4" />
-              </Link>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleEditClick}>
+              <Edit className="w-4 h-4" />
             </Button>
             <Button
               variant="ghost"
@@ -168,6 +189,14 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* 認証要求ダイアログ */}
+      <AuthRequiredDialog
+        open={showAuthDialog}
+        onOpenChange={setShowAuthDialog}
+        isAuthenticated={isAuthenticated}
+        requireCompanyEmail={authDialogRequireCompanyEmail}
+      />
     </Card>
   );
 }

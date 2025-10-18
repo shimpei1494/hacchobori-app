@@ -10,7 +10,11 @@ export const metadata = {
   description: "ユーザープロフィールの編集",
 };
 
-export default async function ProfilePage() {
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ requireCompanyEmail?: string }>;
+}) {
   const session = await auth.api.getSession({
     headers: await import("next/headers").then((mod) => mod.headers()),
   });
@@ -26,6 +30,9 @@ export default async function ProfilePage() {
     redirect("/");
   }
 
+  const params = await searchParams;
+  const showCompanyEmailRequired = params.requireCompanyEmail === "true";
+
   return (
     <div className="container mx-auto max-w-2xl py-8 px-4">
       <div className="space-y-6">
@@ -33,6 +40,14 @@ export default async function ProfilePage() {
           <h1 className="text-3xl font-bold">プロフィール設定</h1>
           <p className="text-muted-foreground mt-2">表示名やメールアドレスなどの情報を編集できます</p>
         </div>
+
+        {showCompanyEmailRequired && !user.companyEmail && (
+          <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-800 dark:bg-yellow-950">
+            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+              レストランを追加・編集するには、会社用メールアドレスの登録が必要です。
+            </p>
+          </div>
+        )}
 
         <ProfileForm user={user} />
       </div>

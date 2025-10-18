@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/db/db";
 import type { Category, NewRestaurant, RestaurantWithCategories } from "@/db/schema";
 import { categories, restaurantCategories, restaurants } from "@/db/schema";
+import { validateAuthWithCompanyEmail } from "@/lib/auth-utils";
 
 /**
  * レストラン操作の結果型
@@ -86,6 +87,15 @@ export async function createRestaurant(
   categoryIds: string[],
 ): Promise<RestaurantActionResult> {
   try {
+    // 認証チェック: ログイン & 会社アドレス登録済みユーザーのみ
+    const authResult = await validateAuthWithCompanyEmail();
+    if ("error" in authResult) {
+      return {
+        success: false,
+        error: authResult.error,
+      };
+    }
+
     // バリデーション: カテゴリが最低1つ選択されているか
     if (!categoryIds || categoryIds.length === 0) {
       return {
@@ -143,6 +153,15 @@ export async function updateRestaurant(
   categoryIds: string[],
 ): Promise<RestaurantActionResult> {
   try {
+    // 認証チェック: ログイン & 会社アドレス登録済みユーザーのみ
+    const authResult = await validateAuthWithCompanyEmail();
+    if ("error" in authResult) {
+      return {
+        success: false,
+        error: authResult.error,
+      };
+    }
+
     // バリデーション: カテゴリが最低1つ選択されているか
     if (!categoryIds || categoryIds.length === 0) {
       return {

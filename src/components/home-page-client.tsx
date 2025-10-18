@@ -1,8 +1,9 @@
 "use client";
 
-import { MapPin, MoreVertical, Search } from "lucide-react";
+import { MoreVertical, Search } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { UserButton } from "@/components/auth/user-button";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { RestaurantCard } from "@/components/restaurant-card";
 import { Badge } from "@/components/ui/badge";
@@ -55,10 +56,7 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
               <p className="text-sm text-muted-foreground">美味しいランチを見つけよう</p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4" />
-                <span className="hidden sm:inline">八丁堀駅周辺</span>
-              </div>
+              <UserButton />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-9 w-9">

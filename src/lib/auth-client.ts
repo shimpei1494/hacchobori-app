@@ -16,7 +16,7 @@ export const signInWithGoogle = async () => {
   try {
     await signIn.social({
       provider: "google",
-      callbackURL: "/dashboard",
+      callbackURL: "/",
     });
   } catch (error) {
     console.error("Google sign in error:", error);

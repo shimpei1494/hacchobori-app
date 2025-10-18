@@ -62,6 +62,16 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
   };
 
+  const handleCloseClick = () => {
+    // ログイン & 会社アドレス登録チェック
+    if (!isAuthenticated || !hasCompanyEmail) {
+      setAuthDialogRequireCompanyEmail(!hasCompanyEmail);
+      setShowAuthDialog(true);
+      return;
+    }
+    setShowCloseDialog(true);
+  };
+
   const handleCloseRestaurant = async () => {
     setIsClosing(true);
     const result = await toggleRestaurantActive(restaurant.id, false);
@@ -110,7 +120,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
               variant="ghost"
               size="icon"
               className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
-              onClick={() => setShowCloseDialog(true)}
+              onClick={handleCloseClick}
             >
               <X className="w-4 h-4" />
             </Button>

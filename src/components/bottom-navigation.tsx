@@ -50,7 +50,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
                     onTabChange(tab.id);
                   }
                 }}
-                className={`flex flex-col items-center gap-1 py-2 px-4 rounded-lg transition-colors ${
+                className={`flex flex-col items-center gap-1 py-2 px-4 rounded-lg transition-colors cursor-pointer ${
                   isActive ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground"
                 }`}
               >

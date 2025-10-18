@@ -1,22 +1,9 @@
 import { db } from "./db";
-import { categories, restaurantCategories, restaurants, users } from "./schema";
+import { categories, restaurantCategories, restaurants } from "./schema";
 
 async function seed() {
   try {
     console.log("🌱 Starting database seeding...");
-
-    // Create sample user
-    const [sampleUser] = await db
-      .insert(users)
-      .values({
-        name: "テストユーザー",
-        email: "test@example.com",
-        emailVerified: true,
-        image: "https://via.placeholder.com/150",
-      })
-      .returning();
-
-    console.log(`✅ Created user: ${sampleUser.name} (${sampleUser.email})`);
 
     // Create categories
     const categoryData = [
@@ -175,7 +162,6 @@ async function seed() {
 
     // Summary
     console.log("\n📋 Seeding Summary:");
-    console.log(`  Users: 1`);
     console.log(`  Categories: ${createdCategories.length}`);
     console.log(`  Restaurants: ${createdRestaurants.length}`);
     console.log(`  Restaurant-Category Links: ${restaurantCategoryLinks.length}`);

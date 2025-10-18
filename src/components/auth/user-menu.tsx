@@ -33,11 +33,13 @@ export function UserMenu() {
     );
   }
 
+  const displayedName = user.displayName || user.name || "ゲスト";
+
   // ユーザー名の頭文字を取得（アバターのフォールバック用）
   const initials =
-    user.name
+    displayedName
       ?.split(" ")
-      .map((n) => n[0])
+      .map((n: string) => n[0])
       .join("")
       .toUpperCase() || "U";
 
@@ -46,7 +48,7 @@ export function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={user.image || undefined} alt={user.name || "User"} />
+            <AvatarImage src={user.image || undefined} alt={displayedName} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
@@ -54,7 +56,7 @@ export function UserMenu() {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
+            <p className="text-sm font-medium leading-none">{displayedName}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>

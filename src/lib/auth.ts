@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db/db";
-import { accounts, sessions, users, verifications } from "../db/schema";
+import { accounts, type Session as DbSession, type User as DbUser, sessions, users, verifications } from "../db/schema";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -25,5 +25,6 @@ export const auth = betterAuth({
   },
 });
 
-export type Session = typeof auth.$Infer.Session.session;
-export type User = typeof auth.$Infer.Session.user;
+// Better Authの型推論にカスタムフィールドが含まれないため、Drizzleの型を使用
+export type Session = DbSession;
+export type User = DbUser;

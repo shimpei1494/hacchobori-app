@@ -3,16 +3,25 @@ import { boolean, integer, numeric, pgTable, primaryKey, text, timestamp, uuid, 
 
 // BetterAuth required tables
 export const users = pgTable("users", {
+  // ========================================
+  // Better Auth必須フィールド（変更不可）
+  // ========================================
   id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
+  name: text("name").notNull(), // Googleプロフィール名（自動更新される可能性あり）
+  email: varchar("email", { length: 255 }).notNull().unique(), // Google認証用メールアドレス
   emailVerified: boolean("email_verified").notNull().default(false),
-  image: text("image"),
+  image: text("image"), // Googleプロフィール画像
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")
     .notNull()
     .defaultNow()
     .$onUpdate(() => new Date()),
+
+  // ========================================
+  // アプリ固有フィールド（ユーザーが変更可能）
+  // ========================================
+  displayName: text("display_name"), // ユーザーが設定する表示名（優先表示）
+  companyEmail: varchar("company_email", { length: 255 }), // 会社用メールアドレス
 });
 
 export const sessions = pgTable("sessions", {

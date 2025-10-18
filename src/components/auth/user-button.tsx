@@ -34,14 +34,15 @@ export function UserButton() {
     );
   }
 
-  const userInitial = user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U";
+  const displayedName = user.displayName || user.name || "ゲスト";
+  const userInitial = displayedName[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U";
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={user.image || undefined} alt={user.name || "ユーザー"} />
+            <AvatarImage src={user.image || undefined} alt={displayedName} />
             <AvatarFallback className="bg-primary text-primary-foreground">{userInitial}</AvatarFallback>
           </Avatar>
         </Button>
@@ -49,7 +50,7 @@ export function UserButton() {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name || "ゲスト"}</p>
+            <p className="text-sm font-medium leading-none">{displayedName}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>

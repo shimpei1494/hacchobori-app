@@ -2,6 +2,7 @@
 
 import { createAuthClient } from "better-auth/react";
 import { toast } from "sonner";
+import type { User } from "@/db/schema";
 
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
@@ -49,7 +50,7 @@ export function useAuthSession() {
   const session = useSession();
 
   return {
-    user: session.data?.user || null,
+    user: (session.data?.user as User | undefined) || null,
     session: session.data?.session || null,
     isLoading: session.isPending,
     isAuthenticated: !!session.data?.user,

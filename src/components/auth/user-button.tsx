@@ -1,6 +1,7 @@
 "use client";
 
 import { LogIn, LogOut, User } from "lucide-react";
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,9 +56,11 @@ export function UserButton() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem disabled className="cursor-not-allowed opacity-60">
-          <User className="mr-2 h-4 w-4" />
-          <span>マイページ（準備中）</span>
+        <DropdownMenuItem asChild>
+          <Link href="/profile" className="cursor-pointer">
+            <User className="mr-2 h-4 w-4" />
+            <span>プロフィール設定</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={signOutWithToast} className="cursor-pointer text-destructive focus:text-destructive">

@@ -23,6 +23,18 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
+  user: {
+    additionalFields: {
+      displayName: {
+        type: "string",
+        required: false,
+      },
+      companyEmail: {
+        type: "string",
+        required: false,
+      },
+    },
+  },
 });
 
 // Better Authの型推論にカスタムフィールドが含まれないため、Drizzleの型を使用

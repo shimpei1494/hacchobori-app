@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { User } from "@/db/schema";
+import { useAuthSession } from "@/lib/auth-client";
 import { type ProfileFormData, profileFormSchema } from "@/lib/validations/profile";
 
 interface ProfileFormProps {
@@ -22,6 +23,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
   const router = useRouter();
   const formId = useId();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { refetch } = useAuthSession();
 
   const {
     register,
@@ -46,6 +48,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
       if (result.success) {
         toast.success("プロフィールを更新しました");
+        // Better Authのセッションキャッシュを更新
+        await refetch();
+        // ページキャッシュも更新
         router.refresh();
       } else {
         toast.error(result.error);

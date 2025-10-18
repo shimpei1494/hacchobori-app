@@ -55,5 +55,15 @@ export function useAuthSession() {
     isLoading: session.isPending,
     isAuthenticated: !!session.data?.user,
     error: session.error,
+    refetch: session.refetch, // セッション再取得関数を公開
   };
+}
+
+// セッションを再取得してキャッシュを更新
+export async function refreshSession() {
+  try {
+    await getSession();
+  } catch (error) {
+    console.error("Session refresh error:", error);
+  }
 }

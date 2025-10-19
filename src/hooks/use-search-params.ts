@@ -17,8 +17,8 @@ export function useSearchParams() {
     {
       // URL更新時のスクロール位置を保持
       scroll: false,
-      // ブラウザ履歴に記録（戻る/進むで状態復元）
-      history: "push",
+      // ブラウザ履歴を上書き（検索途中の状態は履歴に残さない）
+      history: "replace",
     },
   );
 }

@@ -179,6 +179,7 @@ export function CategoriesManager({ initialCategories }: CategoriesManagerProps)
       <CategoryFormDialog
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
+        existingCategories={categories}
         onSuccess={(newCategory) => {
           setCategories([...categories, { ...newCategory, usageCount: 0 }]);
           setShowCreateDialog(false);
@@ -191,6 +192,7 @@ export function CategoriesManager({ initialCategories }: CategoriesManagerProps)
           open={!!editingCategory}
           onOpenChange={(open) => !open && setEditingCategory(null)}
           category={editingCategory}
+          existingCategories={categories}
           onSuccess={(updatedCategory) => {
             setCategories(
               categories.map((cat) =>

@@ -2,6 +2,7 @@
 
 import { useId, useState, useTransition } from "react";
 import { toast } from "sonner";
+import type { CategoryWithUsage } from "@/app/actions/categories";
 import { createCategory, updateCategory } from "@/app/actions/categories";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,10 +22,17 @@ interface CategoryFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   category?: Category;
+  existingCategories: CategoryWithUsage[];
   onSuccess: (category: Category) => void;
 }
 
-export function CategoryFormDialog({ open, onOpenChange, category, onSuccess }: CategoryFormDialogProps) {
+export function CategoryFormDialog({
+  open,
+  onOpenChange,
+  category,
+  existingCategories,
+  onSuccess,
+}: CategoryFormDialogProps) {
   const isEditing = !!category;
   const [name, setName] = useState(category?.name || "");
   const [slug, setSlug] = useState(category?.slug || "");
@@ -47,7 +55,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, onSuccess }: 
     e.preventDefault();
     setErrors({});
 
-    // バリデーション
+    // 1. 入力値のバリデーション
     const validation = categoryFormSchema.safeParse({ name, slug });
     if (!validation.success) {
       const fieldErrors: { name?: string; slug?: string } = {};
@@ -62,6 +70,31 @@ export function CategoryFormDialog({ open, onOpenChange, category, onSuccess }: 
       return;
     }
 
+    // 2. クライアント側で重複チェック（既存データと照合）
+    const duplicates = existingCategories.filter((cat) => {
+      // 編集時は自分自身を除外
+      if (isEditing && cat.id === category.id) {
+        return false;
+      }
+      return cat.name === validation.data.name.trim() || cat.slug === validation.data.slug.trim();
+    });
+
+    if (duplicates.length > 0) {
+      const fieldErrors: { name?: string; slug?: string } = {};
+      const nameExists = duplicates.some((cat) => cat.name === validation.data.name.trim());
+      const slugExists = duplicates.some((cat) => cat.slug === validation.data.slug.trim());
+
+      if (nameExists) {
+        fieldErrors.name = "このカテゴリー名は既に使用されています";
+      }
+      if (slugExists) {
+        fieldErrors.slug = "この識別名は既に使用されています";
+      }
+      setErrors(fieldErrors);
+      return;
+    }
+
+    // 3. DB保存（他のユーザーの同時更新にも対応）
     startTransition(async () => {
       const result = isEditing
         ? await updateCategory(category.id, validation.data.name, validation.data.slug)
@@ -80,6 +113,7 @@ export function CategoryFormDialog({ open, onOpenChange, category, onSuccess }: 
         setSlug("");
         setErrors({});
       } else {
+        // サーバー側で エラーが発生した場合（同時編集のケースなど）
         toast.error(result.error || "エラーが発生しました");
       }
     });

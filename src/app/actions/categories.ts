@@ -24,6 +24,49 @@ export type CategoryWithUsage = Category & {
 };
 
 /**
+ * PostgreSQLのユニーク制約違反エラーを解析してユーザーフレンドリーなエラーを返す
+ */
+function handlePostgresError(error: unknown, defaultMessage: string): CategoryActionResult {
+  if (!(error instanceof Error)) {
+    return { success: false, error: defaultMessage };
+  }
+
+  // biome-ignore lint/suspicious/noExplicitAny: PostgreSQLエラーオブジェクトの型が不明なため
+  const wrappedError = error as any;
+
+  // DrizzleがPostgreSQLエラーをラップしているため、causeから取得
+  const pgError = wrappedError.cause || wrappedError;
+
+  // ユニーク制約違反のエラーコード: 23505
+  if (pgError.code === "23505") {
+    const constraintName = pgError.constraint_name || "";
+
+    // 制約名から重複フィールドを特定
+    if (constraintName === "categories_name_unique") {
+      return {
+        success: false,
+        error: "このカテゴリー名は既に使用されています",
+      };
+    }
+
+    if (constraintName === "categories_slug_unique") {
+      return {
+        success: false,
+        error: "この識別名は既に使用されています",
+      };
+    }
+
+    // どちらか不明な場合
+    return {
+      success: false,
+      error: "同じ名前または識別名のカテゴリーが既に存在します",
+    };
+  }
+
+  return { success: false, error: defaultMessage };
+}
+
+/**
  * カテゴリー一覧を使用数付きで取得
  */
 export async function getCategoriesWithUsage(): Promise<CategoryWithUsage[]> {
@@ -117,17 +160,7 @@ export async function createCategory(name: string, slug: string): Promise<Catego
     };
   } catch (error) {
     console.error("Failed to create category:", error);
-    // ユニーク制約違反の場合
-    if (error instanceof Error && error.message.includes("unique")) {
-      return {
-        success: false,
-        error: "同じ名前または識別名のカテゴリーが既に存在します",
-      };
-    }
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "カテゴリーの作成中にエラーが発生しました",
-    };
+    return handlePostgresError(error, "カテゴリーの作成中にエラーが発生しました");
   }
 }
 
@@ -180,17 +213,7 @@ export async function updateCategory(id: string, name: string, slug: string): Pr
     };
   } catch (error) {
     console.error("Failed to update category:", error);
-    // ユニーク制約違反の場合
-    if (error instanceof Error && error.message.includes("unique")) {
-      return {
-        success: false,
-        error: "同じ名前または識別名のカテゴリーが既に存在します",
-      };
-    }
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "カテゴリーの更新中にエラーが発生しました",
-    };
+    return handlePostgresError(error, "カテゴリーの更新中にエラーが発生しました");
   }
 }
 

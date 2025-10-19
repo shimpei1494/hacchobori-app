@@ -96,7 +96,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
             <div className="space-y-1">
               <p className="text-sm font-medium">{user.name}</p>
               <p className="text-xs text-muted-foreground">
-                画像を変更するにはGoogleアカウントの設定を変更してください
+                画像を変更するにはGoogleアカウントの設定を変更してください。
+                <br />
+                変更後、反映まで最大1日程度かかる場合があります。
               </p>
             </div>
           </div>

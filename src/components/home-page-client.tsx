@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import type { Category, RestaurantWithCategories } from "@/db/schema";
+import { useSearchParams } from "@/hooks/use-search-params";
 import { getCategoryNames, getPrimaryCategory } from "@/lib/restaurant-utils";
 
 interface HomePageClientProps {
@@ -25,9 +26,8 @@ interface HomePageClientProps {
 }
 
 export function HomePageClient({ initialRestaurants, categories }: HomePageClientProps) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [{ q: searchQuery, category: selectedCategory }, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("discover");
-  const [selectedCategory, setSelectedCategory] = useState<string>("すべて");
 
   const filteredRestaurants = initialRestaurants.filter((restaurant) => {
     const primaryCategory = getPrimaryCategory(restaurant);
@@ -91,7 +91,7 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
             <Input
               placeholder="レストランや料理を検索..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchParams({ q: e.target.value })}
               className="pl-10 bg-card"
             />
           </div>
@@ -107,7 +107,7 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
                     ? "bg-primary text-primary-foreground hover:bg-primary/90"
                     : "bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 }`}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => setSearchParams({ category })}
               >
                 {category}
               </Badge>

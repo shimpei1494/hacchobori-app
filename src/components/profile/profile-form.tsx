@@ -84,7 +84,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                   {imageLoading && <Skeleton className="h-20 w-20 rounded-full" />}
                   <AvatarImage
                     src={user.image}
-                    alt={displayedName}
+                    alt="プロフィール画像"
                     onLoad={() => setImageLoading(false)}
                     className={imageLoading ? "opacity-0" : "opacity-100"}
                   />
@@ -94,7 +94,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
               )}
             </Avatar>
             <div className="space-y-1">
-              <p className="text-sm font-medium">{user.name}</p>
               <p className="text-xs text-muted-foreground">
                 画像を変更するにはGoogleアカウントの設定を変更してください。
                 <br />
@@ -114,23 +113,15 @@ export function ProfileForm({ user }: ProfileFormProps) {
         <CardContent className="space-y-4">
           {/* Google認証情報（読み取り専用） */}
           <div className="space-y-2">
-            <Label htmlFor={`${formId}-name`} className="text-muted-foreground">
-              Google名（変更不可）
-            </Label>
-            <Input id={`${formId}-name`} value={user.name} disabled className="bg-muted" />
-            <p className="text-xs text-muted-foreground">Google認証で使用されている名前です</p>
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor={`${formId}-email`} className="text-muted-foreground">
-              Googleメールアドレス（変更不可）
+              Googleアカウント
             </Label>
             <Input id={`${formId}-email`} type="email" value={user.email} disabled className="bg-muted" />
-            <p className="text-xs text-muted-foreground">Google認証で使用されているメールアドレスです</p>
+            <p className="text-xs text-muted-foreground">このアカウントでログインしています</p>
           </div>
 
           {/* 編集可能フィールド */}
-          <div className="border-t pt-4 space-y-4">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor={`${formId}-displayName`}>
                 表示名 <span className="text-xs text-muted-foreground">（任意）</span>

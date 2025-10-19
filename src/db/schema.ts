@@ -78,8 +78,8 @@ export const verifications = pgTable("verifications", {
 // categories テーブル (カフェ、ラーメン、定食、イタリアン、和食、中華、海鮮など)
 export const categories = pgTable("categories", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: varchar("name", { length: 100 }).notNull().unique(),
-  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  name: varchar("name", { length: 15 }).notNull().unique(),
+  slug: varchar("slug", { length: 30 }).notNull().unique(),
   displayOrder: integer("display_order").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });

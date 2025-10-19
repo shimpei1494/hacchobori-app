@@ -70,6 +70,11 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
                       閉店店舗
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/categories" className="cursor-pointer">
+                      カテゴリー管理
+                    </Link>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

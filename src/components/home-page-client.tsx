@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import type { Category, RestaurantWithCategories } from "@/db/schema";
 import { useSearchParams } from "@/hooks/use-search-params";
-import { getCategoryNames, getPrimaryCategory } from "@/lib/restaurant-utils";
+import { getPrimaryCategory } from "@/lib/restaurant-utils";
 
 interface HomePageClientProps {
   initialRestaurants: RestaurantWithCategories[];
@@ -26,24 +26,29 @@ interface HomePageClientProps {
 }
 
 export function HomePageClient({ initialRestaurants, categories }: HomePageClientProps) {
-  const [{ q: searchQuery, category: selectedCategory }, setSearchParams] = useSearchParams();
+  const [{ q: searchQuery, category: selectedCategorySlug }, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("discover");
 
   const filteredRestaurants = initialRestaurants.filter((restaurant) => {
     const primaryCategory = getPrimaryCategory(restaurant);
-    const categoryNames = getCategoryNames(restaurant);
 
     const matchesSearch =
       restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       primaryCategory.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCategory = selectedCategory === "すべて" || categoryNames.some((cat) => cat === selectedCategory);
+    // slugベースでフィルタリング
+    const matchesCategory =
+      selectedCategorySlug === "all" ||
+      restaurant.restaurantCategories.some((rc) => rc.category.slug === selectedCategorySlug);
 
     return matchesSearch && matchesCategory;
   });
 
   // カテゴリ一覧（「すべて」を先頭に追加）
-  const allCategories = ["すべて", ...categories.map((cat) => cat.name)];
+  const allCategories = [
+    { name: "すべて", slug: "all" },
+    ...categories.map((cat) => ({ name: cat.name, slug: cat.slug })),
+  ];
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -100,16 +105,16 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
           <div className="flex gap-2 overflow-x-auto pb-2">
             {allCategories.map((category) => (
               <Badge
-                key={category}
-                variant={category === selectedCategory ? "default" : "outline"}
+                key={category.slug}
+                variant={category.slug === selectedCategorySlug ? "default" : "outline"}
                 className={`whitespace-nowrap cursor-pointer transition-colors ${
-                  category === selectedCategory
+                  category.slug === selectedCategorySlug
                     ? "bg-primary text-primary-foreground hover:bg-primary/90"
                     : "bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 }`}
-                onClick={() => setSearchParams({ category })}
+                onClick={() => setSearchParams({ category: category.slug })}
               >
-                {category}
+                {category.name}
               </Badge>
             ))}
           </div>

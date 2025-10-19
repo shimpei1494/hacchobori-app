@@ -9,8 +9,8 @@ export function useSearchParams() {
     {
       // 検索クエリ: ?q=ラーメン
       q: parseAsString.withDefault(""),
-      // カテゴリーフィルター: ?category=和食
-      category: parseAsString.withDefault("すべて"),
+      // カテゴリーフィルター（slugベース）: ?category=japanese
+      category: parseAsString.withDefault("all"),
     },
     {
       // URL更新時のスクロール位置を保持

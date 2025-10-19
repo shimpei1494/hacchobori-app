@@ -19,7 +19,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { ArrowLeft, Edit2, GripVertical, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useId, useState, useTransition } from "react";
 import { toast } from "sonner";
 import type { CategoryWithUsage } from "@/app/actions/categories";
 import { updateCategoryOrder } from "@/app/actions/categories";
@@ -95,6 +95,9 @@ export function CategoriesManager({ initialCategories }: CategoriesManagerProps)
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [_isPending, startTransition] = useTransition();
 
+  // DndContextに固定IDを渡してHydration Mismatchを防ぐ
+  const dndContextId = useId();
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -160,7 +163,7 @@ export function CategoriesManager({ initialCategories }: CategoriesManagerProps)
             </Button>
           </Card>
         ) : (
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <DndContext id={dndContextId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={categories.map((cat) => cat.id)} strategy={verticalListSortingStrategy}>
               {categories.map((category) => (
                 <SortableCategoryItem

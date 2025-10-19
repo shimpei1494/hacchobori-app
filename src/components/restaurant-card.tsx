@@ -4,6 +4,7 @@ import { Clock, Edit, ExternalLink, Heart, MapPin, Star, X } from "lucide-react"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { toggleFavorite } from "@/app/actions/favorites";
 import { toggleRestaurantActive } from "@/app/actions/restaurants";
 import { AuthRequiredDialog } from "@/components/auth/auth-required-dialog";
 import {
@@ -19,18 +20,18 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import type { RestaurantWithCategories } from "@/db/schema";
+import type { RestaurantWithFavoriteStatus } from "@/db/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { formatPrice, parseRating } from "@/lib/restaurant-utils";
 
 interface RestaurantCardProps {
-  restaurant: RestaurantWithCategories;
+  restaurant: RestaurantWithFavoriteStatus;
 }
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const router = useRouter();
   const { isAuthenticated, hasCompanyEmail } = useAuth();
-  const [isFavorite, setIsFavorite] = useState(false); // TODO: ユーザー認証実装後に対応
+  const [isFavorite, setIsFavorite] = useState(restaurant.isFavorite);
   const [showCloseDialog, setShowCloseDialog] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
@@ -46,15 +47,28 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     router.push(`/restaurants/${restaurant.id}/edit`);
   };
 
-  const toggleFavorite = () => {
+  const handleToggleFavorite = async () => {
     // ログインチェックのみ（会社アドレス不要）
     if (!isAuthenticated) {
       setAuthDialogRequireCompanyEmail(false);
       setShowAuthDialog(true);
       return;
     }
+
+    // 楽観的UI更新
+    const previousState = isFavorite;
     setIsFavorite(!isFavorite);
-    // TODO: お気に入りのServer Action呼び出し
+
+    // Server Action呼び出し
+    const result = await toggleFavorite(restaurant.id);
+
+    if (!result.success) {
+      // エラー時は元に戻す
+      setIsFavorite(previousState);
+      toast.error(result.error || "お気に入りの更新に失敗しました");
+    } else {
+      toast.success(result.isFavorite ? "お気に入りに追加しました" : "お気に入りから削除しました");
+    }
   };
 
   const openGoogleMaps = () => {
@@ -124,7 +138,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             >
               <X className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={toggleFavorite}>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleToggleFavorite}>
               <Heart className={`w-4 h-4 ${isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
             </Button>
           </div>

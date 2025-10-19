@@ -11,6 +11,8 @@ export function useSearchParams() {
       q: parseAsString.withDefault(""),
       // カテゴリーフィルター（slugベース）: ?category=japanese
       category: parseAsString.withDefault("all"),
+      // お気に入りフィルター: ?favorite=true
+      favorite: parseAsString.withDefault(""),
     },
     {
       // URL更新時のスクロール位置を保持

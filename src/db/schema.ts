@@ -232,3 +232,8 @@ export type RestaurantWithFull = Restaurant & {
   }>;
   favorites: Favorite[];
 };
+
+// お気に入り状態を含むレストラン型
+export type RestaurantWithFavoriteStatus = RestaurantWithCategories & {
+  isFavorite: boolean;
+};

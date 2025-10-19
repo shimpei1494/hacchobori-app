@@ -16,17 +16,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import type { Category, RestaurantWithCategories } from "@/db/schema";
+import type { Category, RestaurantWithFavoriteStatus } from "@/db/schema";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { getPrimaryCategory } from "@/lib/restaurant-utils";
 
 interface HomePageClientProps {
-  initialRestaurants: RestaurantWithCategories[];
+  initialRestaurants: RestaurantWithFavoriteStatus[];
   categories: Category[];
 }
 
 export function HomePageClient({ initialRestaurants, categories }: HomePageClientProps) {
-  const [{ q: searchQuery, category: selectedCategorySlug }, setSearchParams] = useSearchParams();
+  const [{ q: searchQuery, category: selectedCategorySlug, favorite: showFavoriteOnly }, setSearchParams] =
+    useSearchParams();
   const [activeTab, setActiveTab] = useState("discover");
 
   const filteredRestaurants = initialRestaurants.filter((restaurant) => {
@@ -41,7 +42,10 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
       selectedCategorySlug === "all" ||
       restaurant.restaurantCategories.some((rc) => rc.category.slug === selectedCategorySlug);
 
-    return matchesSearch && matchesCategory;
+    // お気に入りフィルタ
+    const matchesFavorite = showFavoriteOnly === "true" ? restaurant.isFavorite : true;
+
+    return matchesSearch && matchesCategory && matchesFavorite;
   });
 
   // カテゴリ一覧（「すべて」を先頭に追加）

@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import { signInWithGoogle, signOutWithToast, useAuthSession } from "@/lib/auth-client";
 
 export function UserButton() {
@@ -19,11 +20,7 @@ export function UserButton() {
 
   // ローディング中はスケルトンを表示
   if (isLoading) {
-    return (
-      <div className="flex items-center gap-2">
-        <div className="h-9 w-9 rounded-full bg-border animate-pulse" />
-      </div>
-    );
+    return <Skeleton className="h-9 w-9 rounded-full" />;
   }
 
   if (!isAuthenticated || !user) {

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { User } from "@/db/schema";
 import { useAuthSession } from "@/lib/auth-client";
 import { type ProfileFormData, profileFormSchema } from "@/lib/validations/profile";
@@ -23,6 +24,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
   const router = useRouter();
   const formId = useId();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
   const { refetch } = useAuthSession();
 
   const {
@@ -77,8 +79,19 @@ export function ProfileForm({ user }: ProfileFormProps) {
         <CardContent>
           <div className="flex items-center gap-4">
             <Avatar className="h-20 w-20">
-              <AvatarImage src={user.image || undefined} alt={displayedName} />
-              <AvatarFallback className="bg-primary text-primary-foreground text-2xl">{userInitial}</AvatarFallback>
+              {user.image ? (
+                <>
+                  {imageLoading && <Skeleton className="h-20 w-20 rounded-full" />}
+                  <AvatarImage
+                    src={user.image}
+                    alt={displayedName}
+                    onLoad={() => setImageLoading(false)}
+                    className={imageLoading ? "opacity-0" : "opacity-100"}
+                  />
+                </>
+              ) : (
+                <AvatarFallback className="bg-primary text-primary-foreground text-2xl">{userInitial}</AvatarFallback>
+              )}
             </Avatar>
             <div className="space-y-1">
               <p className="text-sm font-medium">{user.name}</p>

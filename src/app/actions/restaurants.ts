@@ -31,7 +31,7 @@ export async function getRestaurants(): Promise<RestaurantWithCategories[]> {
           },
         },
       },
-      orderBy: [desc(restaurants.rating)],
+      orderBy: [desc(restaurants.createdAt)],
     });
 
     // DBデータをそのまま返す（型のみ）

@@ -5,19 +5,6 @@ import { z } from "zod";
  */
 export const restaurantFormSchema = z.object({
   name: z.string().min(1, "店名は必須です").max(255, "店名は255文字以内で入力してください"),
-  rating: z
-    .string()
-    .optional()
-    .refine(
-      (val) => {
-        if (!val || val === "") return true;
-        const num = Number.parseFloat(val);
-        return !Number.isNaN(num) && num >= 0 && num <= 5;
-      },
-      {
-        message: "評価は0.0〜5.0の範囲で入力してください",
-      },
-    ),
   priceMin: z
     .string()
     .optional()

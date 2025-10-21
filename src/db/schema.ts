@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, integer, numeric, pgTable, primaryKey, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, primaryKey, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 // BetterAuth required tables
 export const users = pgTable("users", {
@@ -88,7 +88,6 @@ export const categories = pgTable("categories", {
 export const restaurants = pgTable("restaurants", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
-  rating: numeric("rating", { precision: 2, scale: 1 }), // 0.0 ~ 5.0
   priceMin: integer("price_min"), // 最低価格(円)
   priceMax: integer("price_max"), // 最高価格(円)
   distance: varchar("distance", { length: 50 }), // "2分", "5分"など

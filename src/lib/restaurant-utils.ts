@@ -41,13 +41,3 @@ export function getCategoryNames(restaurant: RestaurantWithCategories): string[]
 export function getTags(restaurant: RestaurantWithCategories): string[] {
   return getCategoryNames(restaurant);
 }
-
-/**
- * 評価値を数値に変換
- * Drizzleのnumeric型はstring | nullで返されるため、numberに変換
- */
-export function parseRating(rating: string | null): number | null {
-  if (!rating) return null;
-  const parsed = Number(rating);
-  return Number.isNaN(parsed) ? null : parsed;
-}

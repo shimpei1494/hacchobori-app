@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Edit, ExternalLink, Heart, MapPin, Star, X } from "lucide-react";
+import { Clock, Edit, ExternalLink, Heart, MapPin, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { RestaurantWithFavoriteStatus } from "@/db/schema";
 import { useAuth } from "@/hooks/use-auth";
-import { formatPrice, parseRating } from "@/lib/restaurant-utils";
+import { formatPrice } from "@/lib/restaurant-utils";
 
 interface RestaurantCardProps {
   restaurant: RestaurantWithFavoriteStatus;
@@ -103,7 +103,6 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
 
   // ビュー層でデータを加工
   const price = formatPrice(restaurant.priceMin, restaurant.priceMax);
-  const rating = parseRating(restaurant.rating);
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
@@ -116,12 +115,6 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
                   {rc.category.name}
                 </Badge>
               ))}
-              {rating && (
-                <div className="flex items-center gap-1 text-sm">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-medium">{rating}</span>
-                </div>
-              )}
             </div>
             <h3 className="font-semibold text-lg text-balance">{restaurant.name}</h3>
           </div>

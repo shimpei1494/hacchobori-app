@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DollarSign, FileText, Globe, Image as ImageIcon, MapPin, Navigation, Star, Store, Tag } from "lucide-react";
+import { DollarSign, FileText, Globe, Image as ImageIcon, MapPin, Navigation, Store, Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -40,7 +40,6 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
     resolver: zodResolver(restaurantFormSchema),
     defaultValues: {
       name: initialData?.name || "",
-      rating: initialData?.rating || "",
       priceMin: initialData?.priceMin?.toString() || "",
       priceMax: initialData?.priceMax?.toString() || "",
       distance: initialData?.distance || "",
@@ -68,7 +67,6 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
 
       const restaurantData = {
         name: data.name,
-        rating: data.rating ? data.rating : null,
         priceMin: data.priceMin ? Number.parseInt(data.priceMin, 10) : null,
         priceMax: data.priceMax ? Number.parseInt(data.priceMax, 10) : null,
         distance: data.distance || null,
@@ -152,26 +150,6 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
               })}
             </div>
             {errors.categoryIds && <p className="text-sm text-red-500">{errors.categoryIds.message}</p>}
-          </div>
-
-          {/* 評価 */}
-          <div className="space-y-2">
-            <Label htmlFor={`${formId}-rating`} className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              評価（0.0〜5.0）
-            </Label>
-            <Input
-              id={`${formId}-rating`}
-              type="number"
-              step="0.1"
-              min="0"
-              max="5"
-              placeholder="例: 4.5"
-              className="text-base"
-              {...register("rating")}
-              aria-invalid={!!errors.rating}
-            />
-            {errors.rating && <p className="text-sm text-red-500">{errors.rating.message}</p>}
           </div>
 
           {/* 価格帯 */}

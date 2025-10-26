@@ -313,7 +313,8 @@ async function seed() {
         distance: "徒歩6分",
         googleMapUrl: "https://maps.app.goo.gl/NLX7rosZkXBthU1NA",
         tabelogUrl: "https://tabelog.com/tokyo/A1302/A130203/13056965/",
-        description: "すき焼き、ハンバーグ、まぐろなど1000円程度。\n【注意点】混むので早い時間に行くのがおすすめ。お店が狭め。",
+        description:
+          "すき焼き、ハンバーグ、まぐろなど1000円程度。\n【注意点】混むので早い時間に行くのがおすすめ。お店が狭め。",
         isActive: true,
       },
       {
@@ -393,7 +394,8 @@ async function seed() {
         distance: "徒歩6分",
         googleMapUrl: "https://maps.app.goo.gl/7WpBjVUb1oPrxFhv7",
         tabelogUrl: "https://tabelog.com/tokyo/A1313/A131301/13205496/",
-        description: "担々麺、生姜焼き定食、焼き魚定食など酒類豊富！\n【注意点】混むので早い時間に行くのがおすすめ。\n【その他】※34番（BISTRO HAMAIF）の上の階",
+        description:
+          "担々麺、生姜焼き定食、焼き魚定食など酒類豊富！\n【注意点】混むので早い時間に行くのがおすすめ。\n【その他】※34番（BISTRO HAMAIF）の上の階",
         isActive: true,
       },
     ];

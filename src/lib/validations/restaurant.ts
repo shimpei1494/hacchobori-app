@@ -36,7 +36,6 @@ export const restaurantFormSchema = z.object({
   tabelogUrl: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
   websiteUrl: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
   description: z.string().optional(),
-  imageUrl: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
   categoryIds: z.array(z.string()).min(1, "カテゴリを最低1つ選択してください"),
   isActive: z.boolean().default(true),
 });

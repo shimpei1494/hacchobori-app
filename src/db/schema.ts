@@ -95,7 +95,6 @@ export const restaurants = pgTable("restaurants", {
   tabelogUrl: text("tabelog_url"),
   websiteUrl: text("website_url"),
   description: text("description"),
-  imageUrl: text("image_url"),
   isActive: boolean("is_active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at")

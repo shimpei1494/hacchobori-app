@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DollarSign, FileText, Globe, Image as ImageIcon, MapPin, Navigation, Store, Tag } from "lucide-react";
+import { DollarSign, FileText, Globe, MapPin, Navigation, Store, Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -47,7 +47,6 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
       tabelogUrl: initialData?.tabelogUrl || "",
       websiteUrl: initialData?.websiteUrl || "",
       description: initialData?.description || "",
-      imageUrl: initialData?.imageUrl || "",
       categoryIds: initialData?.restaurantCategories?.map((rc) => rc.category.id) || [],
       isActive: initialData?.isActive ?? true,
     },
@@ -74,7 +73,6 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
         tabelogUrl: data.tabelogUrl || null,
         websiteUrl: data.websiteUrl || null,
         description: data.description || null,
-        imageUrl: data.imageUrl || null,
         isActive: data.isActive,
       };
 
@@ -242,7 +240,7 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
             <Globe className="h-5 w-5 text-primary" />
             <CardTitle>リンク・メディア</CardTitle>
           </div>
-          <CardDescription>外部サイトや画像の情報</CardDescription>
+          <CardDescription>外部サイトの情報</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* 食べログURL */}
@@ -277,23 +275,6 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
               aria-invalid={!!errors.websiteUrl}
             />
             {errors.websiteUrl && <p className="text-sm text-red-500">{errors.websiteUrl.message}</p>}
-          </div>
-
-          {/* 画像URL */}
-          <div className="space-y-2">
-            <Label htmlFor={`${formId}-imageUrl`} className="flex items-center gap-2">
-              <ImageIcon className="h-4 w-4" />
-              画像URL
-            </Label>
-            <Input
-              id={`${formId}-imageUrl`}
-              type="url"
-              placeholder="https://example.com/image.jpg"
-              className="text-base"
-              {...register("imageUrl")}
-              aria-invalid={!!errors.imageUrl}
-            />
-            {errors.imageUrl && <p className="text-sm text-red-500">{errors.imageUrl.message}</p>}
           </div>
         </CardContent>
       </Card>

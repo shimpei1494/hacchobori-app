@@ -72,8 +72,12 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   };
 
   const openGoogleMaps = () => {
-    const query = encodeURIComponent(`${restaurant.name} ${restaurant.address}`);
-    window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
+    if (restaurant.googleMapUrl) {
+      window.open(restaurant.googleMapUrl, "_blank");
+    } else {
+      const query = encodeURIComponent(`${restaurant.name} ${restaurant.address}`);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
+    }
   };
 
   const handleCloseClick = () => {

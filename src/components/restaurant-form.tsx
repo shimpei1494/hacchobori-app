@@ -44,6 +44,7 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
       priceMax: initialData?.priceMax?.toString() || "",
       distance: initialData?.distance || "",
       address: initialData?.address || "",
+      googleMapUrl: initialData?.googleMapUrl || "",
       tabelogUrl: initialData?.tabelogUrl || "",
       websiteUrl: initialData?.websiteUrl || "",
       description: initialData?.description || "",
@@ -71,6 +72,7 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
         priceMax: data.priceMax ? Number.parseInt(data.priceMax, 10) : null,
         distance: data.distance || null,
         address: data.address || null,
+        googleMapUrl: data.googleMapUrl || null,
         tabelogUrl: data.tabelogUrl || null,
         websiteUrl: data.websiteUrl || null,
         description: data.description || null,
@@ -228,6 +230,23 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
               className="text-base"
               {...register("address")}
             />
+          </div>
+
+          {/* Google Map URL */}
+          <div className="space-y-2">
+            <Label htmlFor={`${formId}-googleMapUrl`} className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Google Map URL
+            </Label>
+            <Input
+              id={`${formId}-googleMapUrl`}
+              type="url"
+              placeholder="https://maps.app.goo.gl/..."
+              className="text-base"
+              {...register("googleMapUrl")}
+              aria-invalid={!!errors.googleMapUrl}
+            />
+            {errors.googleMapUrl && <p className="text-sm text-red-500">{errors.googleMapUrl.message}</p>}
           </div>
         </CardContent>
       </Card>

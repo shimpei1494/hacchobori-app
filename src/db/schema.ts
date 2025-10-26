@@ -92,6 +92,7 @@ export const restaurants = pgTable("restaurants", {
   priceMax: integer("price_max"), // 最高価格(円)
   distance: varchar("distance", { length: 50 }), // "2分", "5分"など
   address: text("address"),
+  googleMapUrl: text("google_map_url"), // Google Mapsの店舗URL
   tabelogUrl: text("tabelog_url"),
   websiteUrl: text("website_url"),
   description: text("description"),

@@ -33,6 +33,7 @@ export const restaurantFormSchema = z.object({
     ),
   distance: z.string().max(50, "距離は50文字以内で入力してください").optional(),
   address: z.string().optional(),
+  googleMapUrl: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
   tabelogUrl: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
   websiteUrl: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
   description: z.string().optional(),

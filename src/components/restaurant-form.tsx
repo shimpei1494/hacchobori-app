@@ -43,7 +43,6 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
       priceMin: initialData?.priceMin?.toString() || "",
       priceMax: initialData?.priceMax?.toString() || "",
       distance: initialData?.distance || "",
-      address: initialData?.address || "",
       googleMapUrl: initialData?.googleMapUrl || "",
       tabelogUrl: initialData?.tabelogUrl || "",
       websiteUrl: initialData?.websiteUrl || "",
@@ -71,7 +70,6 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
         priceMin: data.priceMin ? Number.parseInt(data.priceMin, 10) : null,
         priceMax: data.priceMax ? Number.parseInt(data.priceMax, 10) : null,
         distance: data.distance || null,
-        address: data.address || null,
         googleMapUrl: data.googleMapUrl || null,
         tabelogUrl: data.tabelogUrl || null,
         websiteUrl: data.websiteUrl || null,
@@ -216,20 +214,6 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
               aria-invalid={!!errors.distance}
             />
             {errors.distance && <p className="text-sm text-red-500">{errors.distance.message}</p>}
-          </div>
-
-          {/* 住所 */}
-          <div className="space-y-2">
-            <Label htmlFor={`${formId}-address`} className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              住所
-            </Label>
-            <Input
-              id={`${formId}-address`}
-              placeholder="例: 東京都中央区八丁堀1-2-3"
-              className="text-base"
-              {...register("address")}
-            />
           </div>
 
           {/* Google Map URL */}

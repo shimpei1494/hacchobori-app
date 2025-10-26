@@ -75,7 +75,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
     if (restaurant.googleMapUrl) {
       window.open(restaurant.googleMapUrl, "_blank");
     } else {
-      const query = encodeURIComponent(`${restaurant.name} ${restaurant.address}`);
+      const query = encodeURIComponent(`${restaurant.name} 東京都八丁堀駅`);
       window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
     }
   };

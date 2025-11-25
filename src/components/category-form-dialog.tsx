@@ -59,11 +59,11 @@ export function CategoryFormDialog({
     const validation = categoryFormSchema.safeParse({ name, slug });
     if (!validation.success) {
       const fieldErrors: { name?: string; slug?: string } = {};
-      for (const error of validation.error.errors) {
-        if (error.path[0] === "name") {
-          fieldErrors.name = error.message;
-        } else if (error.path[0] === "slug") {
-          fieldErrors.slug = error.message;
+      for (const issue of validation.error.issues) {
+        if (issue.path[0] === "name") {
+          fieldErrors.name = issue.message;
+        } else if (issue.path[0] === "slug") {
+          fieldErrors.slug = issue.message;
         }
       }
       setErrors(fieldErrors);

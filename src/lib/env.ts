@@ -25,9 +25,9 @@ const env = {
 } as const;
 
 // Validation for required environment variables - DISABLED for local development
-const requiredEnvVars = ["DATABASE_URL", "BETTER_AUTH_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] as const;
+const _requiredEnvVars = ["DATABASE_URL", "BETTER_AUTH_SECRET", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"] as const;
 
-function validateEnv() {
+function _validateEnv() {
   // Temporarily disabled for local development without DB/auth
   // TODO: Re-enable when setting up production deployment
   /*

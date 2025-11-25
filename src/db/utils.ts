@@ -1,6 +1,14 @@
 import { sql } from "drizzle-orm";
 import { db } from "./db";
 
+interface TableNameResult {
+  tablename: string;
+}
+
+interface CountResult {
+  count: number;
+}
+
 export async function resetDatabase() {
   try {
     console.log("🗑️ Resetting database...");
@@ -35,11 +43,15 @@ export async function listTables() {
     `);
 
     console.log("📋 Database Tables:");
-    result.forEach((row: any) => {
-      console.log(`  - ${row.tablename}`);
-    });
+    if (Array.isArray(result)) {
+      result.forEach((row) => {
+        const tableRow = row as unknown as TableNameResult;
+        console.log(`  - ${tableRow.tablename}`);
+      });
 
-    return result.map((row: any) => row.tablename);
+      return result.map((row) => (row as unknown as TableNameResult).tablename);
+    }
+    return [];
   } catch (error) {
     console.error("Failed to list tables:", error);
     return [];
@@ -54,7 +66,9 @@ export async function getTableRowCounts() {
     for (const tableName of tables) {
       try {
         const result = await db.execute(sql.raw(`SELECT COUNT(*) as count FROM "${tableName}"`));
-        const count = result[0]?.count || 0;
+        const firstRow = Array.isArray(result) ? result[0] : undefined;
+        const countRow = firstRow as unknown as CountResult;
+        const count = countRow?.count || 0;
         console.log(`  ${tableName}: ${count} rows`);
       } catch (error) {
         console.log(`  ${tableName}: Error counting rows`);

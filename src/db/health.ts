@@ -1,6 +1,14 @@
 import { sql } from "drizzle-orm";
 import { db } from "./db";
 
+interface DbVersionResult {
+  version?: string;
+}
+
+interface DbNameResult {
+  current_database?: string;
+}
+
 async function checkDatabaseHealth() {
   try {
     console.log("🔍 Checking database connection...");
@@ -8,7 +16,7 @@ async function checkDatabaseHealth() {
     // Simple health check query
     const result = await db.execute(sql`SELECT 1 as health`);
 
-    if (result && result.length > 0) {
+    if (result && Array.isArray(result) && result.length > 0) {
       console.log("✅ Database connection successful");
       return true;
     } else {
@@ -26,13 +34,16 @@ async function getDatabaseInfo() {
     const versionResult = await db.execute(sql`SELECT version()`);
     const currentDbResult = await db.execute(sql`SELECT current_database()`);
 
+    const versionRow = Array.isArray(versionResult) ? (versionResult[0] as DbVersionResult) : undefined;
+    const dbRow = Array.isArray(currentDbResult) ? (currentDbResult[0] as DbNameResult) : undefined;
+
     console.log("📊 Database Info:");
-    console.log(`  Version: ${versionResult[0]?.version?.split(" ")[1] || "Unknown"}`);
-    console.log(`  Database: ${currentDbResult[0]?.current_database || "Unknown"}`);
+    console.log(`  Version: ${versionRow?.version?.split(" ")[1] || "Unknown"}`);
+    console.log(`  Database: ${dbRow?.current_database || "Unknown"}`);
 
     return {
-      version: versionResult[0]?.version,
-      database: currentDbResult[0]?.current_database,
+      version: versionRow?.version,
+      database: dbRow?.current_database,
     };
   } catch (error) {
     console.error("Failed to get database info:", error);

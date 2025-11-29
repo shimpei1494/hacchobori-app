@@ -2,6 +2,9 @@ import { getUserFavoriteIds } from "@/app/actions/favorites";
 import { HomePageClient } from "@/components/home-page-client";
 import { getCategories, getRestaurants } from "./actions/restaurants";
 
+// Dynamic Renderingを明示的に有効化
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [restaurants, categories, favoriteIds] = await Promise.all([
     getRestaurants(),

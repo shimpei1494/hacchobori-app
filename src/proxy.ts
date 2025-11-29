@@ -1,9 +1,10 @@
-// Middleware temporarily disabled for local development without DB/auth
+// Proxy temporarily disabled for local development without DB/auth
 // TODO: Re-enable when DB and authentication are set up
+// Note: Renamed from middleware.ts to proxy.ts for Next.js 16 compatibility
 
 import { type NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Allow all routes during development without authentication
   return NextResponse.next();
 }

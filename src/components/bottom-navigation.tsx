@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Plus, Search } from "lucide-react";
+import { Heart, Plus, Search, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AuthRequiredDialog } from "@/components/auth/auth-required-dialog";
@@ -47,10 +47,15 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
     onTabChange("discover");
   };
 
+  const handleAIChatClick = () => {
+    router.push("/ai-chat");
+  };
+
   const tabs = [
     { id: "discover", label: "発見", icon: Search, onClick: handleDiscoverClick },
     { id: "add", label: "追加", icon: Plus, onClick: handleAddClick },
     { id: "favorites", label: "お気に入り", icon: Heart, onClick: handleFavoriteClick },
+    { id: "ai-chat", label: "AIに相談", icon: Sparkles, onClick: handleAIChatClick },
   ];
 
   return (

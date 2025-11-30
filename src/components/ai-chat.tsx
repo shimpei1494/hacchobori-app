@@ -115,14 +115,24 @@ export function AIChat() {
             placeholder="レストランについて質問してください..."
             value={input}
             onChange={(e) => setInput(e.currentTarget.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                if (input.trim() && status === "ready") {
+                  sendMessage({ text: input });
+                  setInput("");
+                }
+              }
+            }}
           />
           <PromptInputFooter>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground text-xs">
-                {status === "streaming" ? "回答中..." : "Enter で送信"}
-              </span>
+            <div className="flex-1" />
+            <div className="group/submit relative">
+              <PromptInputSubmit status={status} disabled={!input.trim() || status !== "ready"} />
+              <div className="pointer-events-none absolute -top-10 right-0 hidden whitespace-nowrap rounded-md bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md group-hover/submit:block">
+                {status === "streaming" ? "回答中..." : "Cmd+Enter または Ctrl+Enter で送信"}
+              </div>
             </div>
-            <PromptInputSubmit status={status} disabled={!input.trim() || status !== "ready"} />
           </PromptInputFooter>
         </PromptInput>
       </footer>

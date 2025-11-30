@@ -48,6 +48,12 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
   };
 
   const handleAIChatClick = () => {
+    // ログイン & 会社アドレス登録チェック
+    if (!isAuthenticated || !hasCompanyEmail) {
+      setAuthDialogRequireCompanyEmail(!hasCompanyEmail);
+      setShowAuthDialog(true);
+      return;
+    }
     router.push("/ai-chat");
   };
 

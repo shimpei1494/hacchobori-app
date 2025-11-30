@@ -66,7 +66,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-t border-orange-100 dark:border-orange-900/30 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <div className="flex items-center justify-around py-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -83,8 +83,10 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
                     onTabChange(tab.id);
                   }
                 }}
-                className={`flex flex-col items-center gap-1 py-2 px-4 rounded-lg transition-colors cursor-pointer ${
-                  isActive ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground"
+                className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? "text-orange-600 dark:text-orange-400 bg-gradient-to-t from-orange-100 to-orange-50 dark:from-orange-900/30 dark:to-orange-900/10"
+                    : "text-muted-foreground hover:text-orange-600 dark:hover:text-orange-400"
                 }`}
               >
                 <Icon className="w-5 h-5" />

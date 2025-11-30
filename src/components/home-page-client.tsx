@@ -154,8 +154,13 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
         {/* レストランリスト */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">おすすめのお店</h2>
-            <span className="text-sm text-muted-foreground">{filteredRestaurants.length}件見つかりました</span>
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-5 bg-gradient-to-b from-orange-400 to-amber-500 rounded-full" />
+              <h2 className="text-lg font-semibold">おすすめのお店</h2>
+            </div>
+            <span className="text-sm text-muted-foreground bg-orange-50 dark:bg-orange-900/20 px-2 py-0.5 rounded-full">
+              {filteredRestaurants.length}件
+            </span>
           </div>
 
           {filteredRestaurants.length === 0 ? (

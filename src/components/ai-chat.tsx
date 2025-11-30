@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { BotIcon, PlusIcon, SparklesIcon, UserIcon } from "lucide-react";
+import { BotIcon, PlusIcon, SparklesIcon, SquareIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { Conversation, ConversationContent } from "@/components/ai-elements/conversation";
 import { Message, MessageContent } from "@/components/ai-elements/message";
@@ -25,7 +25,7 @@ const SUGGESTED_PROMPTS = [
 
 export function AIChat() {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, status, setMessages } = useChat();
+  const { messages, sendMessage, status, setMessages, stop } = useChat();
 
   const handleSuggestedPrompt = (prompt: string) => {
     sendMessage({ text: prompt });
@@ -151,9 +151,15 @@ export function AIChat() {
           <PromptInputFooter>
             <div className="flex-1" />
             <div className="group/submit relative">
-              <PromptInputSubmit status={status} disabled={!input.trim() || status !== "ready"} />
+              {status === "streaming" ? (
+                <Button type="button" size="icon" variant="default" className="size-8" onClick={stop}>
+                  <SquareIcon className="size-4" />
+                </Button>
+              ) : (
+                <PromptInputSubmit status={status} disabled={!input.trim() || status !== "ready"} />
+              )}
               <div className="pointer-events-none absolute -top-10 right-0 hidden whitespace-nowrap rounded-md bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md group-hover/submit:block">
-                {status === "streaming" ? "回答中..." : "Cmd+Enter または Ctrl+Enter で送信"}
+                {status === "streaming" ? "クリックで停止" : "Cmd+Enter または Ctrl+Enter で送信"}
               </div>
             </div>
           </PromptInputFooter>

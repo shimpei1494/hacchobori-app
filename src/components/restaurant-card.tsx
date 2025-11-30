@@ -109,13 +109,17 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const price = formatPrice(restaurant.priceMin, restaurant.priceMax);
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
+    <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-orange-200 dark:hover:border-orange-800/30">
       <div className="p-4 border-b">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               {restaurant.restaurantCategories.map((rc) => (
-                <Badge key={rc.category.id} className="bg-primary">
+                <Badge
+                  key={rc.category.id}
+                  variant="outline"
+                  className="bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800/40 font-medium"
+                >
                   {rc.category.name}
                 </Badge>
               ))}
@@ -135,8 +139,13 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             >
               <X className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleToggleFavorite}>
-              <Heart className={`w-4 h-4 ${isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`h-8 w-8 ${isFavorite ? "text-orange-500" : ""}`}
+              onClick={handleToggleFavorite}
+            >
+              <Heart className={`w-4 h-4 ${isFavorite ? "fill-orange-500 text-orange-500" : "text-gray-600"}`} />
             </Button>
           </div>
         </div>
@@ -153,13 +162,18 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
                 <span>{restaurant.distance}</span>
               </div>
             )}
-            <span className="font-medium text-primary">{price}</span>
+            <span className="font-medium text-orange-600 dark:text-orange-400">{price}</span>
           </div>
         </div>
 
         <div className="space-y-2">
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={openGoogleMaps} className="flex-1 bg-transparent">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={openGoogleMaps}
+              className="flex-1 bg-transparent border-orange-200 dark:border-orange-800/30 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-700 dark:hover:text-orange-300"
+            >
               <MapPin className="w-4 h-4 mr-1" />
               地図で見る
             </Button>

@@ -32,7 +32,7 @@ export function AIChat() {
   };
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-hidden">
       <Conversation className="flex-1 overflow-y-auto">
         <ConversationContent>
           {messages.length === 0 ? (

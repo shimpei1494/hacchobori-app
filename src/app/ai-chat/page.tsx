@@ -8,14 +8,12 @@ export const metadata: Metadata = {
 
 export default function AIChatPage() {
   return (
-    <div className="container mx-auto h-full">
-      <div className="flex h-full flex-col">
-        <div className="border-b py-4">
-          <h1 className="text-2xl font-bold">AIランチアシスタント</h1>
-          <p className="text-sm text-muted-foreground">希望に合ったランチのお店をAIが提案します</p>
-        </div>
-        <AIChat />
+    <div className="container mx-auto flex h-[calc(100vh-4rem)] flex-col">
+      <div className="shrink-0 border-b py-4">
+        <h1 className="text-2xl font-bold">AIランチアシスタント</h1>
+        <p className="text-sm text-muted-foreground">希望に合ったランチのお店をAIが提案します</p>
       </div>
+      <AIChat />
     </div>
   );
 }

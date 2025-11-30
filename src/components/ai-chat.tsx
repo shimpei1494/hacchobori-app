@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { BotIcon, UserIcon } from "lucide-react";
+import { BotIcon, PlusIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { Conversation, ConversationContent } from "@/components/ai-elements/conversation";
 import { Message, MessageContent } from "@/components/ai-elements/message";
@@ -13,6 +13,7 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Response } from "@/components/ai-elements/response";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 const SUGGESTED_PROMPTS = [
@@ -24,15 +25,28 @@ const SUGGESTED_PROMPTS = [
 
 export function AIChat() {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, status } = useChat();
+  const { messages, sendMessage, status, setMessages } = useChat();
 
   const handleSuggestedPrompt = (prompt: string) => {
     sendMessage({ text: prompt });
     setInput("");
   };
 
+  const handleNewChat = () => {
+    setMessages([]);
+    setInput("");
+  };
+
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
+      {messages.length > 0 && (
+        <div className="flex shrink-0 items-center justify-end border-b px-4 py-2">
+          <Button variant="outline" size="sm" onClick={handleNewChat}>
+            <PlusIcon className="mr-2 size-4" />
+            新規チャット
+          </Button>
+        </div>
+      )}
       <Conversation className="flex-1 overflow-y-auto">
         <ConversationContent>
           {messages.length === 0 ? (

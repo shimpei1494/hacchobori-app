@@ -19,7 +19,7 @@ export const Message = ({ className, from, ...props }: MessageProps) => (
   />
 );
 
-const messageContentVariants = cva("is-user:dark flex flex-col gap-2 overflow-hidden rounded-lg text-sm", {
+const messageContentVariants = cva("flex flex-col gap-2 overflow-hidden rounded-2xl text-sm", {
   variants: {
     variant: {
       contained: [
@@ -28,8 +28,10 @@ const messageContentVariants = cva("is-user:dark flex flex-col gap-2 overflow-hi
         "group-[.is-assistant]:bg-secondary group-[.is-assistant]:text-foreground",
       ],
       flat: [
-        "group-[.is-user]:max-w-[80%] group-[.is-user]:bg-secondary group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-foreground",
-        "group-[.is-assistant]:text-foreground",
+        // ユーザー: オレンジ系のグラデーション背景、白文字
+        "group-[.is-user]:max-w-[80%] group-[.is-user]:bg-gradient-to-br group-[.is-user]:from-primary group-[.is-user]:to-primary/80 group-[.is-user]:px-4 group-[.is-user]:py-3 group-[.is-user]:text-primary-foreground group-[.is-user]:shadow-sm",
+        // AI回答: 薄いクリーム背景、ボーダー付きでクリーンな印象
+        "group-[.is-assistant]:bg-gradient-to-br group-[.is-assistant]:from-muted/50 group-[.is-assistant]:to-card group-[.is-assistant]:text-foreground group-[.is-assistant]:px-4 group-[.is-assistant]:py-3 group-[.is-assistant]:border group-[.is-assistant]:border-border/50 group-[.is-assistant]:shadow-sm",
       ],
     },
   },

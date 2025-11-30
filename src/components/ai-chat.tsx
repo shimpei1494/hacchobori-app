@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { BotIcon, PlusIcon, UserIcon } from "lucide-react";
+import { BotIcon, PlusIcon, SparklesIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { Conversation, ConversationContent } from "@/components/ai-elements/conversation";
 import { Message, MessageContent } from "@/components/ai-elements/message";
@@ -106,9 +106,18 @@ export function AIChat() {
           )}
 
           {status === "streaming" && (
-            <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <div className="size-2 animate-pulse rounded-full bg-primary" />
-              入力中...
+            <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 px-4 py-3">
+              <div className="flex items-center justify-center rounded-full bg-primary/10 p-2">
+                <SparklesIcon className="size-4 animate-pulse text-primary" />
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-muted-foreground">考え中</span>
+                <span className="flex gap-1">
+                  <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:0ms]" />
+                  <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:150ms]" />
+                  <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:300ms]" />
+                </span>
+              </div>
             </div>
           )}
         </ConversationContent>

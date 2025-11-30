@@ -27,8 +27,8 @@ export function AIChat() {
   const { messages, sendMessage, status } = useChat();
 
   const handleSuggestedPrompt = (prompt: string) => {
-    setInput(prompt);
     sendMessage({ text: prompt });
+    setInput("");
   };
 
   return (

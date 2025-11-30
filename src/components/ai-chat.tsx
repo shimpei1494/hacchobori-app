@@ -17,10 +17,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 const SUGGESTED_PROMPTS = [
-  "800円以内で5分以内のラーメン屋を教えて",
-  "カフェでゆっくりできる場所はある?",
-  "今日のランチのおすすめは?",
-  "定食屋さんを探している",
+  "海鮮ランチを教えて",
+  "中華ランチを教えて",
+  "定食系のランチを教えて",
+  "カレー系のランチを教えて",
 ];
 
 export function AIChat() {

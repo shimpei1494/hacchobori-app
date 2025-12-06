@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DollarSign, FileText, Globe, MapPin, Navigation, Store, Tag } from "lucide-react";
+import { DollarSign, FileText, Globe, Loader2, MapPin, Navigation, Sparkles, Store, Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,7 +15,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Category, RestaurantWithCategories } from "@/db/schema";
+import { extractRestaurantFromTabelog } from "@/lib/ai/extract-restaurant";
 import { type RestaurantFormData, restaurantFormSchema } from "@/lib/validations/restaurant";
+import type { ExtractRestaurantResult } from "@/types/extract-restaurant";
 
 interface RestaurantFormProps {
   categories: Category[];
@@ -26,6 +28,8 @@ interface RestaurantFormProps {
 export function RestaurantForm({ categories, initialData, mode = "create" }: RestaurantFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [tabelogUrlInput, setTabelogUrlInput] = useState("");
 
   // Generate unique ID prefix for all form fields
   const formId = useId();
@@ -58,6 +62,50 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
     const current = selectedCategories || [];
     const updated = current.includes(categoryId) ? current.filter((id) => id !== categoryId) : [...current, categoryId];
     setValue("categoryIds", updated);
+  };
+
+  /**
+   * 食べログURLから情報を取得してフォームにプリフィル
+   */
+  const handleExtractFromTabelog = async () => {
+    if (!tabelogUrlInput) {
+      toast.error("食べログURLを入力してください");
+      return;
+    }
+
+    setIsExtracting(true);
+    try {
+      const result: ExtractRestaurantResult = await extractRestaurantFromTabelog(tabelogUrlInput, categories);
+
+      if (!result.success) {
+        toast.error(result.error);
+        return;
+      }
+
+      // フォームにデータをプリフィル
+      setValue("name", result.data.name);
+      setValue("tabelogUrl", result.tabelogUrl);
+
+      if (result.data.priceMin !== null) {
+        setValue("priceMin", result.data.priceMin.toString());
+      }
+      if (result.data.priceMax !== null) {
+        setValue("priceMax", result.data.priceMax.toString());
+      }
+      if (result.data.description) {
+        setValue("description", result.data.description);
+      }
+      if (result.matchedCategoryIds.length > 0) {
+        setValue("categoryIds", result.matchedCategoryIds);
+      }
+
+      toast.success("食べログから情報を取得しました。内容を確認して保存してください。");
+    } catch (error) {
+      console.error("Failed to extract from tabelog:", error);
+      toast.error("情報の取得に失敗しました");
+    } finally {
+      setIsExtracting(false);
+    }
   };
 
   const onSubmit = async (data: RestaurantFormData) => {
@@ -100,6 +148,50 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* 食べログURL入力（新規作成時のみ表示） */}
+      {mode === "create" && (
+        <Card className="border-2 border-primary/50 bg-primary/5">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <CardTitle>AIで自動入力</CardTitle>
+            </div>
+            <CardDescription>食べログのURLを入力すると、AIが情報を取得して自動入力します</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                type="url"
+                placeholder="https://tabelog.com/tokyo/A1234/..."
+                className="flex-1 text-base"
+                value={tabelogUrlInput}
+                onChange={(e) => setTabelogUrlInput(e.target.value)}
+                disabled={isExtracting}
+              />
+              <Button
+                type="button"
+                onClick={handleExtractFromTabelog}
+                disabled={isExtracting || !tabelogUrlInput}
+                className="shrink-0"
+              >
+                {isExtracting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    取得中...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    情報を取得
+                  </>
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">※ 取得した情報は確認・編集後に保存してください</p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* 基本情報 */}
       <Card className="border-2">
         <CardHeader>

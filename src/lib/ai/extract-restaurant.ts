@@ -23,19 +23,16 @@ function extractEssentialHtml(html: string): string {
   const metaMatches = html.match(/<meta[^>]*>/g) || [];
 
   return `
-${titleMatch ? titleMatch[0] : ''}
-${metaMatches.join('\n')}
-${jsonLdMatches.join('\n')}
+${titleMatch ? titleMatch[0] : ""}
+${metaMatches.join("\n")}
+${jsonLdMatches.join("\n")}
   `.trim();
 }
 
 /**
  * 食べログのHTMLからレストラン情報をAIで抽出
  */
-async function extractRestaurantFromHtml(
-  html: string,
-  availableCategories: Category[],
-): Promise<ExtractedRestaurant> {
+async function extractRestaurantFromHtml(html: string, availableCategories: Category[]): Promise<ExtractedRestaurant> {
   const categoryNames = availableCategories.map((c) => c.name).join("、");
 
   // 必要な情報のみを抽出（トークン削減）

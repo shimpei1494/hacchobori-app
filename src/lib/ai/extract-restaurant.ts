@@ -48,11 +48,11 @@ async function extractRestaurantFromHtml(
 
 【重要】ジャンル選択について:
 - HTMLのJSON-LD内の"servesCuisine"フィールド、またはタイトル・メタタグからジャンルを確認
-- 以下のカテゴリから最も適切なものを1つ選択してください:
+- 以下のカテゴリから該当するものを全て選択してください（複数選択可）:
   ${categoryNames}
-- 例: "servesCuisine":"食堂、洋食、からあげ" の場合 → "定食" を選択
-- 例: "servesCuisine":"ラーメン" の場合 → "ラーメン" を選択
-- どれにも当てはまらない場合は "その他" を選択
+- 例: "servesCuisine":"食堂、洋食、からあげ" の場合 → ["定食", "洋食"] を選択
+- 例: "servesCuisine":"ラーメン" の場合 → ["ラーメン"] を選択
+- どれにも当てはまらない場合は空配列 [] を返してください
 
 価格について:
 - JSON-LDの"priceRange"や口コミから価格帯を抽出
@@ -73,68 +73,6 @@ ${essentialHtml}`,
   });
 
   return result.object;
-}
-
-// TODO ロジック見直す
-/**
- * ジャンル文字列から最も適切なカテゴリIDを推定
- */
-function matchCategories(genre: string, availableCategories: Category[]): string[] {
-  const genreLower = genre.toLowerCase();
-  const matched: string[] = [];
-
-  console.log("[matchCategories] genre:", genre, "genreLower:", genreLower);
-
-  // カテゴリ名とマッチングルールの定義
-  const matchRules: Record<string, string[]> = {
-    ラーメン: ["ラーメン", "らーめん", "つけ麺", "つけめん", "担々麺", "担担麺", "油そば"],
-    定食: ["定食", "食堂", "和定食", "日替わり", "唐揚げ", "からあげ", "揚げ物", "弁当", "丼もの"],
-    カフェ: ["カフェ", "喫茶", "コーヒー", "珈琲", "cafe"],
-    イタリアン: ["イタリアン", "イタリア", "パスタ", "ピザ", "ピッツァ", "italian"],
-    和食: ["和食", "日本料理", "割烹", "懐石", "天ぷら", "寿司", "蕎麦", "そば", "うどん", "丼"],
-    中華: ["中華", "中国", "餃子", "炒飯", "チャーハン", "麻婆", "回鍋肉", "青椒肉絲"],
-    海鮮: ["海鮮", "魚介", "刺身", "寿司", "すし", "鮮魚", "シーフード"],
-    カレー: ["カレー", "カリー", "curry", "インドカレー", "スパイスカレー"],
-    洋食: ["洋食", "ハンバーグ", "オムライス", "グラタン", "ステーキ", "ビフテキ"],
-    エスニック: [
-      "エスニック",
-      "タイ",
-      "ベトナム",
-      "韓国",
-      "アジア",
-      "インド",
-      "台湾",
-      "フォー",
-      "トムヤム",
-      "グリーンカレー",
-    ],
-    フレンチ: ["フレンチ", "フランス", "ビストロ", "french"],
-  };
-
-  for (const category of availableCategories) {
-    const rules = matchRules[category.name];
-    if (rules) {
-      for (const rule of rules) {
-        if (genreLower.includes(rule.toLowerCase())) {
-          console.log("[matchCategories] Matched:", category.name, "with rule:", rule);
-          matched.push(category.id);
-          break;
-        }
-      }
-    }
-  }
-
-  // マッチしない場合は「その他」を探す
-  if (matched.length === 0) {
-    console.log("[matchCategories] No match found, using 'その他'");
-    const otherCategory = availableCategories.find((c) => c.name === "その他");
-    if (otherCategory) {
-      matched.push(otherCategory.id);
-    }
-  }
-
-  console.log("[matchCategories] Final matched IDs:", matched);
-  return matched;
 }
 
 /**
@@ -180,19 +118,13 @@ export async function extractRestaurantFromTabelog(
       };
     }
 
-    // AIでレストラン情報を抽出（カテゴリ一覧を渡す）
+    // AIでレストラン情報を抽出(カテゴリ一覧を渡す)
     const extracted = await extractRestaurantFromHtml(html, availableCategories);
 
-    // AIが選択したカテゴリ名からIDを取得
-    const matchedCategory = availableCategories.find((c) => c.name === extracted.genre);
-    const matchedCategoryIds = matchedCategory ? [matchedCategory.id] : [];
-
-    // マッチしない場合は従来のルールベースマッチングにフォールバック
-    if (matchedCategoryIds.length === 0) {
-      console.log("[extractRestaurantFromTabelog] AI didn't match category, using fallback");
-      const fallbackIds = matchCategories(extracted.genre, availableCategories);
-      matchedCategoryIds.push(...fallbackIds);
-    }
+    // AIが選択したカテゴリ名からIDを取得(マッチしない場合は空配列)
+    const matchedCategoryIds = extracted.genres
+      .map((genreName) => availableCategories.find((c) => c.name === genreName)?.id)
+      .filter((id): id is string => id !== undefined);
 
     return {
       success: true,

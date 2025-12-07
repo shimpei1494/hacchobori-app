@@ -32,12 +32,12 @@ export const restaurantFormSchema = z.object({
       },
     ),
   distance: z.string().max(50, "距離は50文字以内で入力してください").optional(),
-  googleMapUrl: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
-  tabelogUrl: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
-  websiteUrl: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
+  googleMapUrl: z.url("有効なURLを入力してください").optional().or(z.literal("")),
+  tabelogUrl: z.url("有効なURLを入力してください").optional().or(z.literal("")),
+  websiteUrl: z.url("有効なURLを入力してください").optional().or(z.literal("")),
   description: z.string().optional(),
   categoryIds: z.array(z.string()).min(1, "カテゴリを最低1つ選択してください"),
   isActive: z.boolean().default(true),
 });
 
-export type RestaurantFormData = z.infer<typeof restaurantFormSchema>;
+export type RestaurantFormData = z.input<typeof restaurantFormSchema>;

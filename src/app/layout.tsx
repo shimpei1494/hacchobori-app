@@ -6,6 +6,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type React from "react";
 import { Suspense } from "react";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,13 +21,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <NuqsAdapter>
-          <Suspense fallback={null}>{children}</Suspense>
-          <Toaster position="top-center" />
-          <Analytics />
-        </NuqsAdapter>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <NuqsAdapter>
+            <Suspense fallback={null}>{children}</Suspense>
+            <Toaster position="top-center" />
+            <Analytics />
+          </NuqsAdapter>
+        </ThemeProvider>
       </body>
     </html>
   );

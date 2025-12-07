@@ -59,8 +59,8 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
 
   const tabs = [
     { id: "discover", label: "発見", icon: Search, onClick: handleDiscoverClick },
-    { id: "add", label: "追加", icon: Plus, onClick: handleAddClick },
     { id: "favorites", label: "お気に入り", icon: Heart, onClick: handleFavoriteClick },
+    { id: "add", label: "追加", icon: Plus, onClick: handleAddClick },
     { id: "ai-chat", label: "AIに相談", icon: Sparkles, onClick: handleAIChatClick },
   ];
 

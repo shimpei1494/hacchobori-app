@@ -183,7 +183,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
                 variant="outline"
                 size="sm"
                 onClick={() => window.open(restaurant.tabelogUrl ?? "", "_blank")}
-                className="flex-1"
+                className="flex-1 bg-transparent border-orange-200 dark:border-orange-800/30 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-700 dark:hover:text-orange-300"
               >
                 <ExternalLink className="w-4 h-4 mr-1" />
                 食べログ

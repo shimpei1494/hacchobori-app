@@ -6,6 +6,7 @@ import { useState } from "react";
 import { UserButton } from "@/components/auth/user-button";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { RestaurantCard } from "@/components/restaurant-card";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -56,7 +57,7 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* 統合ヘッダー */}
-      <header className="sticky top-0 z-10 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-950/30 dark:via-amber-950/30 dark:to-yellow-950/30 border-b border-orange-100 dark:border-orange-900/30 shadow-sm">
+      <header className="sticky top-0 z-10 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-950 dark:via-amber-950 dark:to-yellow-950 border-b border-orange-100 dark:border-orange-900/30 shadow-sm">
         {/* メインヘッダー */}
         <div className="px-4 pt-4 pb-3">
           <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -82,6 +83,7 @@ export function HomePageClient({ initialRestaurants, categories }: HomePageClien
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <UserButton />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

@@ -29,11 +29,7 @@
         "noUnknownAtRules": {
           "level": "warn",
           "options": {
-            "ignore": [
-              "custom-variant",
-              "theme",
-              "apply"
-            ]
+            "ignore": ["custom-variant", "theme", "apply"]
           }
         }
       }

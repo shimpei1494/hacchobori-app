@@ -5,7 +5,9 @@ import { z } from "zod";
  */
 export const extractedRestaurantSchema = z.object({
   name: z.string().describe("レストラン・店舗の名前"),
-  genres: z.array(z.string()).describe("ジャンル・料理カテゴリの配列（例: ['ラーメン', '海鮮']）。該当するカテゴリがない場合は空配列"),
+  genres: z
+    .array(z.string())
+    .describe("ジャンル・料理カテゴリの配列（例: ['ラーメン', '海鮮']）。該当するカテゴリがない場合は空配列"),
   priceMin: z.number().nullable().describe("最低価格（円）。不明な場合はnull"),
   priceMax: z.number().nullable().describe("最高価格（円）。不明な場合はnull"),
   address: z.string().nullable().describe("住所。不明な場合はnull"),

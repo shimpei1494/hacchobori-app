@@ -1,22 +1,25 @@
-import { getUserFavoriteIds } from "@/app/actions/favorites";
-import { HomePageClient } from "@/components/home-page-client";
+import { Suspense } from "react";
+import { HomePageHeader } from "@/components/home-page-header";
+import { RestaurantCardsSkeleton } from "@/components/restaurant-cards-skeleton";
+import { RestaurantList } from "@/components/restaurant-list";
 import { getCategories, getRestaurants } from "./actions/restaurants";
 
-// Dynamic Renderingを明示的に有効化
-export const dynamic = "force-dynamic";
+// ISR (Incremental Static Regeneration) を有効化 - 1時間ごとにキャッシュを再検証
+export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [restaurants, categories, favoriteIds] = await Promise.all([
-    getRestaurants(),
-    getCategories(),
-    getUserFavoriteIds(),
-  ]);
+  // カテゴリとレストランを並列で取得（Promise.allで高速化）
+  const [categories, restaurants] = await Promise.all([getCategories(), getRestaurants()]);
 
-  // お気に入り情報を付与
-  const restaurantsWithFavoriteStatus = restaurants.map((restaurant) => ({
-    ...restaurant,
-    isFavorite: favoriteIds.includes(restaurant.id),
-  }));
+  return (
+    <div className="min-h-screen bg-background pb-20">
+      {/* ヘッダー・検索・カテゴリフィルターは即座に表示 */}
+      <HomePageHeader categories={categories} />
 
-  return <HomePageClient initialRestaurants={restaurantsWithFavoriteStatus} categories={categories} />;
+      {/* レストランリスト部分だけSuspenseで遅延ロード */}
+      <Suspense fallback={<RestaurantCardsSkeleton />}>
+        <RestaurantList initialRestaurants={restaurants} />
+      </Suspense>
+    </div>
+  );
 }

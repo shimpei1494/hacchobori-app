@@ -2,7 +2,7 @@
 
 import { Clock, Edit, ExternalLink, Heart, MapPin, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { toggleFavorite } from "@/app/actions/favorites";
 import { toggleRestaurantActive } from "@/app/actions/restaurants";
@@ -36,6 +36,11 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const [isClosing, setIsClosing] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [authDialogRequireCompanyEmail, setAuthDialogRequireCompanyEmail] = useState(false);
+
+  // propsのisFavoriteが変更されたらステートを同期
+  useEffect(() => {
+    setIsFavorite(restaurant.isFavorite);
+  }, [restaurant.isFavorite]);
 
   const handleEditClick = () => {
     // ログイン & 会社アドレス登録チェック

@@ -4,8 +4,8 @@ import { RestaurantCardsSkeleton } from "@/components/restaurant-cards-skeleton"
 import { RestaurantList } from "@/components/restaurant-list";
 import { getCategories, getRestaurants } from "./actions/restaurants";
 
-// ISR (Incremental Static Regeneration) を有効化 - 1時間ごとにキャッシュを再検証
-export const revalidate = 3600;
+// 実際のデータ更新はrevalidatePath()で即座に反映されるため、この期間は長くても問題ない
+export const revalidate = 604800; // 7日 = 604800秒
 
 export default async function HomePage() {
   // カテゴリとレストランを並列で取得（Promise.allで高速化）

@@ -1,11 +1,15 @@
 "use server";
 
 import { desc, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import { db } from "@/db/db";
 import type { Category, NewRestaurant, RestaurantWithCategories } from "@/db/schema";
 import { categories, restaurantCategories, restaurants } from "@/db/schema";
 import { validateAuthWithCompanyEmail } from "@/lib/auth-utils";
+import {
+  revalidateOnRestaurantCreate,
+  revalidateOnRestaurantToggleActive,
+  revalidateOnRestaurantUpdate,
+} from "@/lib/revalidation";
 
 /**
  * レストラン操作の結果型
@@ -129,8 +133,7 @@ export async function createRestaurant(
     );
 
     // キャッシュを再検証
-    revalidatePath("/");
-    revalidatePath("/categories");
+    revalidateOnRestaurantCreate();
 
     return {
       success: true,
@@ -200,9 +203,7 @@ export async function updateRestaurant(
     );
 
     // キャッシュを再検証
-    revalidatePath("/");
-    revalidatePath("/categories");
-    revalidatePath(`/restaurants/${id}/edit`);
+    revalidateOnRestaurantUpdate(id);
 
     return {
       success: true,
@@ -238,8 +239,7 @@ export async function toggleRestaurantActive(id: string, isActive: boolean): Pro
     }
 
     // キャッシュを再検証
-    revalidatePath("/");
-    revalidatePath("/restaurants/closed");
+    revalidateOnRestaurantToggleActive();
 
     return {
       success: true,

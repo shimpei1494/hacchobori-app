@@ -130,6 +130,7 @@ export async function createRestaurant(
 
     // キャッシュを再検証
     revalidatePath("/");
+    revalidatePath("/categories");
 
     return {
       success: true,
@@ -200,6 +201,7 @@ export async function updateRestaurant(
 
     // キャッシュを再検証
     revalidatePath("/");
+    revalidatePath("/categories");
     revalidatePath(`/restaurants/${id}/edit`);
 
     return {

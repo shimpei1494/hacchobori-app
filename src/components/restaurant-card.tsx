@@ -32,6 +32,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const router = useRouter();
   const { isAuthenticated, hasCompanyEmail } = useAuth();
   const [isFavorite, setIsFavorite] = useState(restaurant.isFavorite);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
   const [showCloseDialog, setShowCloseDialog] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [showAuthDialog, setShowAuthDialog] = useState(false);
@@ -41,6 +42,20 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   useEffect(() => {
     setIsFavorite(restaurant.isFavorite);
   }, [restaurant.isFavorite]);
+
+  // ハートアイコンのスタイル判定
+  const getHeartClassName = () => {
+    if (isTogglingFavorite) {
+      return "text-gray-400 animate-pulse"; // トグル中
+    }
+    if (isFavorite) {
+      return "fill-orange-500 text-orange-500"; // お気に入り
+    }
+    return "text-gray-600"; // 未お気に入り
+  };
+
+  // ボタンの disabled 判定
+  const isDisabled = isTogglingFavorite;
 
   const handleEditClick = () => {
     // ログイン & 会社アドレス登録チェック
@@ -60,19 +75,24 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
       return;
     }
 
+    setIsTogglingFavorite(true);
     // 楽観的UI更新
     const previousState = isFavorite;
     setIsFavorite(!isFavorite);
 
-    // Server Action呼び出し
-    const result = await toggleFavorite(restaurant.id);
+    try {
+      // Server Action呼び出し
+      const result = await toggleFavorite(restaurant.id);
 
-    if (!result.success) {
-      // エラー時は元に戻す
-      setIsFavorite(previousState);
-      toast.error(result.error || "お気に入りの更新に失敗しました");
-    } else {
-      toast.success(result.isFavorite ? "お気に入りに追加しました" : "お気に入りから削除しました");
+      if (!result.success) {
+        // エラー時は元に戻す
+        setIsFavorite(previousState);
+        toast.error(result.error || "お気に入りの更新に失敗しました");
+      } else {
+        toast.success(result.isFavorite ? "お気に入りに追加しました" : "お気に入りから削除しました");
+      }
+    } finally {
+      setIsTogglingFavorite(false);
     }
   };
 
@@ -147,10 +167,12 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className={`h-8 w-8 ${isFavorite ? "text-orange-500" : ""}`}
+              className={`h-8 w-8 ${isFavorite && !isTogglingFavorite ? "text-orange-500" : ""}`}
               onClick={handleToggleFavorite}
+              disabled={isDisabled}
+              aria-label={isFavorite ? "お気に入りから削除" : "お気に入りに追加"}
             >
-              <Heart className={`w-4 h-4 ${isFavorite ? "fill-orange-500 text-orange-500" : "text-gray-600"}`} />
+              <Heart className={`w-4 h-4 ${getHeartClassName()}`} />
             </Button>
           </div>
         </div>
@@ -231,12 +253,14 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
       </AlertDialog>
 
       {/* 認証要求ダイアログ */}
-      <AuthRequiredDialog
-        open={showAuthDialog}
-        onOpenChange={setShowAuthDialog}
-        isAuthenticated={isAuthenticated}
-        requireCompanyEmail={authDialogRequireCompanyEmail}
-      />
+      {showAuthDialog ? (
+        <AuthRequiredDialog
+          open={showAuthDialog}
+          onOpenChange={setShowAuthDialog}
+          isAuthenticated={isAuthenticated}
+          requireCompanyEmail={authDialogRequireCompanyEmail}
+        />
+      ) : null}
     </Card>
   );
 }

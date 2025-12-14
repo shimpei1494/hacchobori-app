@@ -1,24 +1,20 @@
 import { Suspense } from "react";
-import { HomePageHeader } from "@/components/home-page-header";
+import { HomePageHeaderWithSuspense } from "@/components/home-page-header-with-suspense";
 import { RestaurantCardsSkeleton } from "@/components/restaurant-cards-skeleton";
-import { RestaurantList } from "@/components/restaurant-list";
-import { getCategories, getRestaurants } from "./actions/restaurants";
+import { RestaurantListWrapper } from "@/components/restaurant-list-wrapper";
 
 // 実際のデータ更新はrevalidatePath()で即座に反映されるため、この期間は長くても問題ない
 export const revalidate = 604800; // 7日 = 604800秒
 
-export default async function HomePage() {
-  // カテゴリとレストランを並列で取得（Promise.allで高速化）
-  const [categories, restaurants] = await Promise.all([getCategories(), getRestaurants()]);
-
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* ヘッダー・検索・カテゴリフィルターは即座に表示 */}
-      <HomePageHeader categories={categories} />
+      {/* ヘッダー（sticky固定）- カテゴリー部分のみSuspense境界内でストリーミング表示 */}
+      <HomePageHeaderWithSuspense />
 
-      {/* レストランリスト部分だけSuspenseで遅延ロード */}
+      {/* レストランリスト - Suspense境界内でデータ取得してストリーミング表示 */}
       <Suspense fallback={<RestaurantCardsSkeleton />}>
-        <RestaurantList initialRestaurants={restaurants} />
+        <RestaurantListWrapper />
       </Suspense>
     </div>
   );

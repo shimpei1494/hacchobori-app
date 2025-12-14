@@ -1,51 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getUserFavoriteIds } from "@/app/actions/favorites";
+import { useState } from "react";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { RestaurantCard } from "@/components/restaurant-card";
 import { Card } from "@/components/ui/card";
-import type { RestaurantWithCategories } from "@/db/schema";
-import { useAuth } from "@/hooks/use-auth";
+import type { RestaurantWithFavoriteStatus } from "@/db/schema";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { getPrimaryCategory } from "@/lib/restaurant-utils";
 
 interface RestaurantListProps {
-  initialRestaurants: RestaurantWithCategories[];
+  initialRestaurants: RestaurantWithFavoriteStatus[];
 }
 
 export function RestaurantList({ initialRestaurants }: RestaurantListProps) {
   const [{ q: searchQuery, category: selectedCategorySlug, favorite: showFavoriteOnly }] = useSearchParams();
-  const { isAuthenticated } = useAuth();
-  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("discover");
 
-  // クライアント側でお気に入りデータを取得
-  useEffect(() => {
-    async function loadFavorites() {
-      if (!isAuthenticated) {
-        setFavoriteIds([]);
-        return;
-      }
-
-      try {
-        const ids = await getUserFavoriteIds();
-        setFavoriteIds(ids);
-      } catch (error) {
-        console.error("Failed to load favorites:", error);
-      }
-    }
-
-    loadFavorites();
-  }, [isAuthenticated]);
-
-  // レストランにお気に入り情報を付与
-  const restaurantsWithFavoriteStatus = initialRestaurants.map((restaurant) => ({
-    ...restaurant,
-    isFavorite: favoriteIds.includes(restaurant.id),
-  }));
-
-  const filteredRestaurants = restaurantsWithFavoriteStatus.filter((restaurant) => {
+  const filteredRestaurants = initialRestaurants.filter((restaurant) => {
     const primaryCategory = getPrimaryCategory(restaurant);
 
     const matchesSearch =

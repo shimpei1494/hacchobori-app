@@ -1,11 +1,16 @@
 "use server";
 
 import { count, eq, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import { db } from "@/db/db";
 import type { Category } from "@/db/schema";
 import { categories, restaurantCategories } from "@/db/schema";
 import { validateAuthWithCompanyEmail } from "@/lib/auth-utils";
+import {
+  revalidateOnCategoryCreate,
+  revalidateOnCategoryDelete,
+  revalidateOnCategoryReorder,
+  revalidateOnCategoryUpdate,
+} from "@/lib/revalidation";
 
 /**
  * カテゴリー操作の結果型
@@ -151,8 +156,7 @@ export async function createCategory(name: string, slug: string): Promise<Catego
     }
 
     // キャッシュを再検証
-    revalidatePath("/");
-    revalidatePath("/categories");
+    revalidateOnCategoryCreate();
 
     return {
       success: true,
@@ -204,8 +208,7 @@ export async function updateCategory(id: string, name: string, slug: string): Pr
     }
 
     // キャッシュを再検証
-    revalidatePath("/");
-    revalidatePath("/categories");
+    revalidateOnCategoryUpdate();
 
     return {
       success: true,
@@ -247,8 +250,7 @@ export async function updateCategoryOrder(categoryIds: string[]): Promise<Catego
     }
 
     // キャッシュを再検証
-    revalidatePath("/");
-    revalidatePath("/categories");
+    revalidateOnCategoryReorder();
 
     return {
       success: true,
@@ -300,8 +302,7 @@ export async function deleteCategory(id: string): Promise<CategoryActionResult> 
     }
 
     // キャッシュを再検証
-    revalidatePath("/");
-    revalidatePath("/categories");
+    revalidateOnCategoryDelete();
 
     return {
       success: true,

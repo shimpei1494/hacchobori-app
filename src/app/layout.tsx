@@ -10,7 +10,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "八丁堀ランチ - 美味しいランチを見つけよう",
+  title: "八丁堀ランチ MAP",
   description: "八丁堀エリアのランチ情報を管理するアプリ",
   generator: "v0.app",
 };

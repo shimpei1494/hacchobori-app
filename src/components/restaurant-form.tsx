@@ -222,7 +222,7 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
           <div className="space-y-3">
             <Label className="flex items-center gap-2">
               <Tag className="h-4 w-4" />
-              カテゴリ <span className="text-red-500">*</span>
+              カテゴリ（複数選択可） <span className="text-red-500">*</span>
             </Label>
             <div className="flex flex-wrap gap-2">
               {categories.map((category) => {

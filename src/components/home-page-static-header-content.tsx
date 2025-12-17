@@ -52,7 +52,7 @@ export function HomePageStaticHeaderContent() {
             <UserButton />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-orange-100 dark:hover:bg-orange-900/30">
+                <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent/10">
                   <MoreVertical className="h-5 w-5" />
                   <span className="sr-only">メニュー</span>
                 </Button>
@@ -78,7 +78,7 @@ export function HomePageStaticHeaderContent() {
       <div className="px-4 pb-3">
         <div className="max-w-7xl mx-auto">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-icon-active w-4 h-4" />
             <Input
               placeholder="お店や料理を検索..."
               value={searchQuery}

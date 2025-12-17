@@ -46,12 +46,12 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   // ハートアイコンのスタイル判定
   const getHeartClassName = () => {
     if (isTogglingFavorite) {
-      return "text-gray-400 animate-pulse"; // トグル中
+      return "text-icon-disabled animate-pulse"; // トグル中
     }
     if (isFavorite) {
-      return "fill-orange-500 text-orange-500"; // お気に入り
+      return "fill-orange-500 text-orange-500 dark:fill-orange-400 dark:text-orange-400"; // お気に入り（視認性のためオレンジ維持）
     }
-    return "text-gray-600"; // 未お気に入り
+    return "text-icon"; // 未お気に入り
   };
 
   // ボタンの disabled 判定
@@ -153,13 +153,18 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </div>
           {/* アクションボタン（編集・閉店・お気に入り） */}
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleEditClick}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-icon hover:bg-accent/10 hover:text-icon-active"
+              onClick={handleEditClick}
+            >
               <Edit className="w-4 h-4" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+              className="h-8 w-8 text-icon hover:bg-accent/10 hover:text-icon-active"
               onClick={handleCloseClick}
             >
               <X className="w-4 h-4" />
@@ -167,7 +172,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className={`h-8 w-8 ${isFavorite && !isTogglingFavorite ? "text-orange-500" : ""}`}
+              className={`h-8 w-8 hover:bg-accent/10 ${!isFavorite ? "text-icon hover:text-icon-active" : ""}`}
               onClick={handleToggleFavorite}
               disabled={isDisabled}
               aria-label={isFavorite ? "お気に入りから削除" : "お気に入りに追加"}

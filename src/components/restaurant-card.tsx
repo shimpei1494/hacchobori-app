@@ -124,10 +124,11 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         description: "閉店店舗ページから復活できます",
       });
       setShowCloseDialog(false);
+      // 成功時は isClosing をリセットしない（ダイアログが閉じるため不要）
     } else {
       toast.error(result.error || "閉店処理に失敗しました");
+      setIsClosing(false); // エラー時のみリセット
     }
-    setIsClosing(false);
   };
 
   // ビュー層でデータを加工

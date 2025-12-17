@@ -52,7 +52,11 @@ export function HomePageStaticHeaderContent() {
             <UserButton />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent/10">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 text-icon hover:bg-accent/10 hover:text-icon-active"
+                >
                   <MoreVertical className="h-5 w-5" />
                   <span className="sr-only">メニュー</span>
                 </Button>

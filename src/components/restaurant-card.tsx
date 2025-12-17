@@ -134,8 +134,8 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   const price = formatPrice(restaurant.priceMin, restaurant.priceMax);
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-orange-200 dark:hover:border-orange-800/30">
-      <div className="p-4 border-b">
+    <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-orange-200 dark:hover:border-orange-800/30 flex flex-col h-full">
+      <div className="p-4 border-b flex-shrink-0">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -183,7 +183,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         </div>
       </div>
 
-      <CardContent className="p-4">
+      <CardContent className="p-4 flex flex-col flex-1">
         <p className="text-sm text-muted-foreground mb-3 text-pretty">{restaurant.description}</p>
 
         <div className="flex items-center justify-between mb-4">
@@ -198,7 +198,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 mt-auto">
           <div className="flex gap-2">
             <Button
               variant="outline"

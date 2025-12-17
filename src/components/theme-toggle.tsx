@@ -17,8 +17,8 @@ export function ThemeToggle() {
   // サーバーサイドレンダリング中はスケルトンを表示
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-orange-100 dark:hover:bg-orange-900/30" disabled>
-        <Sun className="h-5 w-5" />
+      <Button variant="ghost" size="icon" className="h-9 w-9 hover:bg-accent/10" disabled>
+        <div className="h-5 w-5" />
         <span className="sr-only">テーマ切り替え</span>
       </Button>
     );
@@ -30,9 +30,10 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon"
-      className="h-9 w-9 hover:bg-orange-100 dark:hover:bg-orange-900/30"
+      className="h-9 w-9 hover:bg-accent/10"
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
+      {/* 意図的な色分け: 太陽=黄色（日中を想起）、月=灰色（夜を想起） */}
       {isDark ? <Sun className="h-5 w-5 text-yellow-500" /> : <Moon className="h-5 w-5 text-slate-700" />}
       <span className="sr-only">テーマ切り替え</span>
     </Button>

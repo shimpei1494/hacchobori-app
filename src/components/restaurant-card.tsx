@@ -46,12 +46,12 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
   // ハートアイコンのスタイル判定
   const getHeartClassName = () => {
     if (isTogglingFavorite) {
-      return "text-gray-400 animate-pulse"; // トグル中
+      return "text-icon-disabled animate-pulse"; // トグル中
     }
     if (isFavorite) {
-      return "fill-orange-500 text-orange-500"; // お気に入り
+      return "fill-orange-500 text-orange-500 dark:fill-orange-400 dark:text-orange-400"; // お気に入り（視認性のためオレンジ維持）
     }
-    return "text-gray-600"; // 未お気に入り
+    return "text-icon"; // 未お気に入り
   };
 
   // ボタンの disabled 判定
@@ -126,16 +126,16 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
       setShowCloseDialog(false);
     } else {
       toast.error(result.error || "閉店処理に失敗しました");
+      setIsClosing(false); // エラー時のみリセット
     }
-    setIsClosing(false);
   };
 
   // ビュー層でデータを加工
   const price = formatPrice(restaurant.priceMin, restaurant.priceMax);
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-orange-200 dark:hover:border-orange-800/30">
-      <div className="p-4 border-b">
+    <Card className="overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-orange-200 dark:hover:border-orange-800/30 flex flex-col h-full">
+      <div className="p-4 border-b flex-shrink-0">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -153,13 +153,18 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </div>
           {/* アクションボタン（編集・閉店・お気に入り） */}
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleEditClick}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-icon hover:bg-accent/10 hover:text-icon-active"
+              onClick={handleEditClick}
+            >
               <Edit className="w-4 h-4" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+              className="h-8 w-8 text-icon hover:bg-accent/10 hover:text-icon-active"
               onClick={handleCloseClick}
             >
               <X className="w-4 h-4" />
@@ -167,7 +172,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className={`h-8 w-8 ${isFavorite && !isTogglingFavorite ? "text-orange-500" : ""}`}
+              className={`h-8 w-8 hover:bg-accent/10 ${!isFavorite ? "text-icon hover:text-icon-active" : ""}`}
               onClick={handleToggleFavorite}
               disabled={isDisabled}
               aria-label={isFavorite ? "お気に入りから削除" : "お気に入りに追加"}
@@ -178,7 +183,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
         </div>
       </div>
 
-      <CardContent className="p-4">
+      <CardContent className="p-4 flex flex-col flex-1">
         <p className="text-sm text-muted-foreground mb-3 text-pretty">{restaurant.description}</p>
 
         <div className="flex items-center justify-between mb-4">
@@ -193,7 +198,7 @@ export function RestaurantCard({ restaurant }: RestaurantCardProps) {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 mt-auto">
           <div className="flex gap-2">
             <Button
               variant="outline"

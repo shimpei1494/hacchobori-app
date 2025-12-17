@@ -3,7 +3,7 @@
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/db/db";
 import type { Category, NewRestaurant, RestaurantWithCategories } from "@/db/schema";
-import { categories, restaurantCategories, restaurants } from "@/db/schema";
+import { categories, favorites, restaurantCategories, restaurants } from "@/db/schema";
 import { validateAuthWithCompanyEmail } from "@/lib/auth-utils";
 import {
   revalidateOnRestaurantCreate,
@@ -274,5 +274,47 @@ export async function getClosedRestaurants(): Promise<RestaurantWithCategories[]
   } catch (error) {
     console.error("Failed to fetch closed restaurants:", error);
     return [];
+  }
+}
+
+/**
+ * レストランを完全に削除（物理削除）
+ * 関連データ（カテゴリ紐付け、お気に入り）も同時に削除されます
+ */
+export async function deleteRestaurantPermanently(id: string): Promise<RestaurantActionResult> {
+  try {
+    // 認証チェック: ログイン & 会社アドレス登録済みユーザーのみ
+    const authResult = await validateAuthWithCompanyEmail();
+    if ("error" in authResult) {
+      return {
+        success: false,
+        error: authResult.error,
+      };
+    }
+
+    // トランザクションで関連データも含めて削除
+    await db.transaction(async (tx) => {
+      // 1. カテゴリ紐付けを削除
+      await tx.delete(restaurantCategories).where(eq(restaurantCategories.restaurantId, id));
+
+      // 2. お気に入りを削除
+      await tx.delete(favorites).where(eq(favorites.restaurantId, id));
+
+      // 3. レストラン本体を削除
+      await tx.delete(restaurants).where(eq(restaurants.id, id));
+    });
+
+    // キャッシュを再検証
+    revalidateOnRestaurantToggleActive();
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.error("Failed to delete restaurant permanently:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "レストランの削除中にエラーが発生しました",
+    };
   }
 }

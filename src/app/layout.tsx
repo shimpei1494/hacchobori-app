@@ -12,7 +12,6 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "八丁堀ランチ MAP",
   description: "八丁堀エリアのランチ情報を管理するアプリ",
-  generator: "v0.app",
 };
 
 export default function RootLayout({
@@ -23,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" disableTransitionOnChange>
           <NuqsAdapter>
             <Suspense fallback={null}>{children}</Suspense>
             <Toaster position="top-center" />

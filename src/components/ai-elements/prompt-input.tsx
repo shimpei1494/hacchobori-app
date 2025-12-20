@@ -933,7 +933,7 @@ export const PromptInputSpeechButton = ({
 
       speechRecognition.continuous = true;
       speechRecognition.interimResults = true;
-      speechRecognition.lang = "en-US";
+      speechRecognition.lang = "ja-JP";
 
       speechRecognition.onstart = () => {
         setIsListening(true);

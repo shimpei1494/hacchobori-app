@@ -2,14 +2,16 @@
 
 import { useChat } from "@ai-sdk/react";
 import { BotIcon, PlusIcon, SparklesIcon, SquareIcon, UserIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Conversation, ConversationContent } from "@/components/ai-elements/conversation";
 import { Message, MessageContent } from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputFooter,
+  PromptInputSpeechButton,
   PromptInputSubmit,
   PromptInputTextarea,
+  PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
 import { Response } from "@/components/ai-elements/response";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -25,6 +27,7 @@ const SUGGESTED_PROMPTS = [
 
 export function AIChat() {
   const [input, setInput] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { messages, sendMessage, status, setMessages, stop } = useChat();
 
   const handleSuggestedPrompt = (prompt: string) => {
@@ -135,6 +138,7 @@ export function AIChat() {
           }}
         >
           <PromptInputTextarea
+            ref={textareaRef}
             placeholder="レストランについて質問してください..."
             value={input}
             onChange={(e) => setInput(e.currentTarget.value)}
@@ -149,7 +153,9 @@ export function AIChat() {
             }}
           />
           <PromptInputFooter>
-            <div className="flex-1" />
+            <PromptInputTools>
+              <PromptInputSpeechButton textareaRef={textareaRef} onTranscriptionChange={(text) => setInput(text)} />
+            </PromptInputTools>
             <div className="group/submit relative">
               {status === "streaming" ? (
                 <Button type="button" size="icon" variant="default" className="size-8" onClick={stop}>

@@ -3,9 +3,6 @@ import { HomePageHeaderWithSuspense } from "@/components/home-page-header-with-s
 import { RestaurantCardsSkeleton } from "@/components/restaurant-cards-skeleton";
 import { RestaurantListWrapper } from "@/components/restaurant-list-wrapper";
 
-// 実際のデータ更新はrevalidatePath()で即座に反映されるため、この期間は長くても問題ない
-export const revalidate = 604800; // 7日 = 604800秒
-
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background pb-20">

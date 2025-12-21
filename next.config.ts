@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Next.js 16 の use cache ディレクティブを有効化
+  cacheComponents: true,
   images: {
     remotePatterns: [
       {

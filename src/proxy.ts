@@ -46,9 +46,10 @@ export async function proxy(request: NextRequest) {
  */
 export const config = {
   matcher: [
-    "/categories",      // カテゴリー管理
-    "/restaurants/new",         // レストラン追加
-    "/restaurants/:id/edit",    // レストラン編集
-    "/ai-chat",                 // AIチャット
+    "/categories", // カテゴリー管理
+    "/restaurants/new", // レストラン追加
+    "/restaurants/:id/edit", // レストラン編集
+    "/restaurants/closed", // 閉店レストラン一覧
+    "/ai-chat", // AIチャット
   ],
 };

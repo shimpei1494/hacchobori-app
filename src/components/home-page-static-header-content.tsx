@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/use-auth";
 import { useSearchParams } from "@/hooks/use-search-params";
 
 /**
@@ -20,6 +21,8 @@ import { useSearchParams } from "@/hooks/use-search-params";
  */
 export function HomePageStaticHeaderContent() {
   const [{ q: searchQuery }, setSearchParams] = useSearchParams();
+  const { isAuthenticated, hasCompanyEmail } = useAuth();
+  const canAccessAdminFeatures = isAuthenticated && hasCompanyEmail;
 
   return (
     <>
@@ -61,18 +64,20 @@ export function HomePageStaticHeaderContent() {
                   <span className="sr-only">メニュー</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <Link href="/restaurants/closed" className="cursor-pointer">
-                    閉店店舗
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/categories" className="cursor-pointer">
-                    カテゴリー管理
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
+              {canAccessAdminFeatures && (
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/restaurants/closed" className="cursor-pointer">
+                      閉店店舗
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/categories" className="cursor-pointer">
+                      カテゴリー管理
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              )}
             </DropdownMenu>
           </div>
         </div>

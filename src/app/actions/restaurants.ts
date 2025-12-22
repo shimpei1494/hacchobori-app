@@ -1,6 +1,7 @@
 "use server";
 
 import { desc, eq } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db/db";
 import type { Category, NewRestaurant, RestaurantWithCategories } from "@/db/schema";
 import { categories, favorites, restaurantCategories, restaurants } from "@/db/schema";
@@ -25,6 +26,10 @@ export type RestaurantActionResult = {
  * 純粋なDBデータを返す。表示用の加工はビュー層で行う。
  */
 export async function getRestaurants(): Promise<RestaurantWithCategories[]> {
+  "use cache";
+  cacheLife("days");
+  cacheTag("restaurants");
+
   try {
     const result = await db.query.restaurants.findMany({
       where: eq(restaurants.isActive, true),

@@ -1,6 +1,7 @@
 "use server";
 
 import { count, eq, sql } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db/db";
 import type { Category } from "@/db/schema";
 import { categories, restaurantCategories } from "@/db/schema";
@@ -75,6 +76,10 @@ function handlePostgresError(error: unknown, defaultMessage: string): CategoryAc
  * カテゴリー一覧を使用数付きで取得
  */
 export async function getCategoriesWithUsage(): Promise<CategoryWithUsage[]> {
+  "use cache";
+  cacheLife("days");
+  cacheTag("categories");
+
   try {
     // カテゴリーごとにレストランとの紐付け数をカウント
     const result = await db

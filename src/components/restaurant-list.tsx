@@ -1,22 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getUserFavoriteIds } from "@/app/actions/favorites";
 import { BottomNavigation } from "@/components/bottom-navigation";
 import { RestaurantCard } from "@/components/restaurant-card";
 import { Card } from "@/components/ui/card";
-import type { RestaurantWithFavoriteStatus } from "@/db/schema";
+import type { RestaurantWithCategories, RestaurantWithFavoriteStatus } from "@/db/schema";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { getPrimaryCategory } from "@/lib/restaurant-utils";
 
 interface RestaurantListProps {
-  initialRestaurants: RestaurantWithFavoriteStatus[];
+  initialRestaurants: RestaurantWithCategories[];
 }
 
 export function RestaurantList({ initialRestaurants }: RestaurantListProps) {
+  // お気に入り状態をクライアント側で管理（ハイドレーションミスマッチ回避）
+  const [restaurants, setRestaurants] = useState<RestaurantWithFavoriteStatus[]>(
+    initialRestaurants.map((r) => ({ ...r, isFavorite: false })),
+  );
+
+  // クライアント側でお気に入り状態を取得
+  useEffect(() => {
+    async function loadFavorites() {
+      const favoriteIds = await getUserFavoriteIds();
+      setRestaurants((prev) =>
+        prev.map((r) => ({
+          ...r,
+          isFavorite: favoriteIds.includes(r.id),
+        })),
+      );
+    }
+    loadFavorites();
+  }, []);
   const [{ q: searchQuery, category: selectedCategorySlug, favorite: showFavoriteOnly }] = useSearchParams();
   const [activeTab, setActiveTab] = useState("discover");
 
-  const filteredRestaurants = initialRestaurants.filter((restaurant) => {
+  const filteredRestaurants = restaurants.filter((restaurant) => {
     const primaryCategory = getPrimaryCategory(restaurant);
 
     const matchesSearch =

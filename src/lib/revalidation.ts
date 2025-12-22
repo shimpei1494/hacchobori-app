@@ -1,117 +1,59 @@
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 
 /**
- * Revalidationパスの定義
- * アプリ全体のキャッシュ無効化ルールを一元管理
+ * キャッシュタグベースのRevalidation
+ * Next.js 16の"use cache"ディレクティブと連携
+ *
+ * Server Actionsでは updateTag を使用（read-your-own-writes シナリオ）
+ * ユーザーが自分の変更を即座に確認できる
  */
-export const REVALIDATION_PATHS = {
-  /**
-   * レストラン関連のrevalidation
-   */
-  restaurants: {
-    /** レストラン作成時に無効化するパス */
-    onCreate: [
-      "/", // トップページ（レストラン一覧）
-      "/categories", // カテゴリページ（カテゴリ別レストラン数）
-    ],
-    /** レストラン更新時に無効化するパス */
-    onUpdate: (id: string) => [
-      "/", // トップページ（レストラン一覧）
-      "/categories", // カテゴリページ（カテゴリ別レストラン数）
-      `/restaurants/${id}/edit`, // 編集ページ
-    ],
-    /** レストランの営業状態切り替え時に無効化するパス */
-    onToggleActive: [
-      "/", // トップページ（レストラン一覧）
-      "/restaurants/closed", // 閉店店舗一覧
-    ],
-  },
-  /**
-   * カテゴリ関連のrevalidation
-   */
-  categories: {
-    /** カテゴリ作成時に無効化するパス */
-    onCreate: [
-      "/", // トップページ（カテゴリフィルタ）
-      "/categories", // カテゴリ管理ページ
-    ],
-    /** カテゴリ更新時に無効化するパス */
-    onUpdate: [
-      "/", // トップページ（カテゴリフィルタ）
-      "/categories", // カテゴリ管理ページ
-    ],
-    /** カテゴリ並び替え時に無効化するパス */
-    onReorder: [
-      "/", // トップページ（カテゴリフィルタ）
-      "/categories", // カテゴリ管理ページ
-    ],
-    /** カテゴリ削除時に無効化するパス */
-    onDelete: [
-      "/", // トップページ（カテゴリフィルタ）
-      "/categories", // カテゴリ管理ページ
-    ],
-  },
-} as const;
 
 /**
- * レストラン作成時のキャッシュ再検証
+ * レストラン作成時のキャッシュ更新
+ * Server Actionsから呼ばれるため updateTag を使用
  */
 export function revalidateOnRestaurantCreate() {
-  for (const path of REVALIDATION_PATHS.restaurants.onCreate) {
-    revalidatePath(path);
-  }
+  updateTag("restaurants");
 }
 
 /**
- * レストラン更新時のキャッシュ再検証
+ * レストラン更新時のキャッシュ更新
  */
-export function revalidateOnRestaurantUpdate(id: string) {
-  for (const path of REVALIDATION_PATHS.restaurants.onUpdate(id)) {
-    revalidatePath(path);
-  }
+export function revalidateOnRestaurantUpdate(_id: string) {
+  updateTag("restaurants");
 }
 
 /**
- * レストランの営業状態切り替え時のキャッシュ再検証
+ * レストランの営業状態切り替え時のキャッシュ更新
  */
 export function revalidateOnRestaurantToggleActive() {
-  for (const path of REVALIDATION_PATHS.restaurants.onToggleActive) {
-    revalidatePath(path);
-  }
+  updateTag("restaurants");
 }
 
 /**
- * カテゴリ作成時のキャッシュ再検証
+ * カテゴリ作成時のキャッシュ更新
  */
 export function revalidateOnCategoryCreate() {
-  for (const path of REVALIDATION_PATHS.categories.onCreate) {
-    revalidatePath(path);
-  }
+  updateTag("categories");
 }
 
 /**
- * カテゴリ更新時のキャッシュ再検証
+ * カテゴリ更新時のキャッシュ更新
  */
 export function revalidateOnCategoryUpdate() {
-  for (const path of REVALIDATION_PATHS.categories.onUpdate) {
-    revalidatePath(path);
-  }
+  updateTag("categories");
 }
 
 /**
- * カテゴリ並び替え時のキャッシュ再検証
+ * カテゴリ並び替え時のキャッシュ更新
  */
 export function revalidateOnCategoryReorder() {
-  for (const path of REVALIDATION_PATHS.categories.onReorder) {
-    revalidatePath(path);
-  }
+  updateTag("categories");
 }
 
 /**
- * カテゴリ削除時のキャッシュ再検証
+ * カテゴリ削除時のキャッシュ更新
  */
 export function revalidateOnCategoryDelete() {
-  for (const path of REVALIDATION_PATHS.categories.onDelete) {
-    revalidatePath(path);
-  }
+  updateTag("categories");
 }

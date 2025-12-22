@@ -1,24 +1,54 @@
-// Proxy temporarily disabled for local development without DB/auth
-// TODO: Re-enable when DB and authentication are set up
-// Note: Renamed from middleware.ts to proxy.ts for Next.js 16 compatibility
+/**
+ * Next.js 16 Proxy
+ * 認証が必要なページへのアクセスを制御
+ *
+ * matcher: Proxy関数をいつ実行するかを制御（パフォーマンス最適化）
+ * proxy関数: 実際の認証チェックロジック
+ */
 
 import { type NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 
 export async function proxy(request: NextRequest) {
-  // Allow all routes during development without authentication
+  // matcherで既にフィルタリングされているので、
+  // このパスに到達した時点で認証が必要なページ
+
+  try {
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
+
+    // 認証されていない場合はリダイレクト
+    if (!session?.user) {
+      const url = new URL("/", request.url);
+      return NextResponse.redirect(url);
+    }
+
+    // companyEmailチェック（会社メールアドレス登録が必須）
+    const user = session.user as { companyEmail?: string };
+    if (!user.companyEmail) {
+      const url = new URL("/", request.url);
+      return NextResponse.redirect(url);
+    }
+  } catch (error) {
+    console.error("Proxy authentication check failed:", error);
+    const url = new URL("/", request.url);
+    return NextResponse.redirect(url);
+  }
+
+  // 認証成功 - ページレンダリングへ進む
   return NextResponse.next();
 }
 
+/**
+ * 認証が必要なページのパスパターン
+ * このmatcherで指定したパスのみproxy関数が実行される
+ */
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder files
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/categories",      // カテゴリー管理
+    "/restaurants/new",         // レストラン追加
+    "/restaurants/:id/edit",    // レストラン編集
+    "/ai-chat",                 // AIチャット
   ],
 };

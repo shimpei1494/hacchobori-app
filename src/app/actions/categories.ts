@@ -77,7 +77,7 @@ function handlePostgresError(error: unknown, defaultMessage: string): CategoryAc
  */
 export async function getCategoriesWithUsage(): Promise<CategoryWithUsage[]> {
   "use cache";
-  cacheLife("days");
+  cacheLife("weeks");
   cacheTag("categories");
 
   try {
@@ -107,6 +107,10 @@ export async function getCategoriesWithUsage(): Promise<CategoryWithUsage[]> {
  * カテゴリー一覧を取得（displayOrder順）
  */
 export async function getCategories(): Promise<Category[]> {
+  "use cache";
+  cacheLife("weeks");
+  cacheTag("categories");
+
   try {
     return await db.query.categories.findMany({
       orderBy: [categories.displayOrder],

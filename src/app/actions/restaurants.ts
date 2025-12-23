@@ -3,8 +3,8 @@
 import { desc, eq } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db/db";
-import type { Category, NewRestaurant, RestaurantWithCategories } from "@/db/schema";
-import { categories, favorites, restaurantCategories, restaurants } from "@/db/schema";
+import type { NewRestaurant, RestaurantWithCategories } from "@/db/schema";
+import { favorites, restaurantCategories, restaurants } from "@/db/schema";
 import { validateAuthWithCompanyEmail } from "@/lib/auth-utils";
 import {
   revalidateOnRestaurantCreate,
@@ -27,7 +27,7 @@ export type RestaurantActionResult = {
  */
 export async function getRestaurants(): Promise<RestaurantWithCategories[]> {
   "use cache";
-  cacheLife("days");
+  cacheLife("weeks");
   cacheTag("restaurants");
 
   try {
@@ -51,19 +51,6 @@ export async function getRestaurants(): Promise<RestaurantWithCategories[]> {
   }
 }
 
-/**
- * カテゴリ一覧を取得
- */
-export async function getCategories(): Promise<Category[]> {
-  try {
-    return await db.query.categories.findMany({
-      orderBy: [categories.displayOrder],
-    });
-  } catch (error) {
-    console.error("Failed to fetch categories:", error);
-    return [];
-  }
-}
 
 /**
  * レストラン1件を取得（カテゴリ情報含む）

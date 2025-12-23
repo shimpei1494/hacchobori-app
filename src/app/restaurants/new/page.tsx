@@ -1,4 +1,4 @@
-import { getCategories } from "@/app/actions/restaurants";
+import { getCategories } from "@/app/actions/categories";
 import { RestaurantForm } from "@/components/restaurant-form";
 
 export default async function NewRestaurantPage() {

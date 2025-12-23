@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getCategories, getRestaurantById } from "@/app/actions/restaurants";
+import { getCategories } from "@/app/actions/categories";
+import { getRestaurantById } from "@/app/actions/restaurants";
 import { RestaurantForm } from "@/components/restaurant-form";
 
 interface EditRestaurantPageProps {

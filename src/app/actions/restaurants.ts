@@ -1,16 +1,12 @@
 "use server";
 
 import { desc, eq } from "drizzle-orm";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheLife, cacheTag, updateTag } from "next/cache";
 import { db } from "@/db/db";
 import type { NewRestaurant, RestaurantWithCategories } from "@/db/schema";
 import { favorites, restaurantCategories, restaurants } from "@/db/schema";
 import { validateAuthWithCompanyEmail } from "@/lib/auth-utils";
-import {
-  revalidateOnRestaurantCreate,
-  revalidateOnRestaurantToggleActive,
-  revalidateOnRestaurantUpdate,
-} from "@/lib/revalidation";
+import { CACHE_TAG } from "@/lib/cache-tags";
 
 /**
  * レストラン操作の結果型
@@ -28,7 +24,7 @@ export type RestaurantActionResult = {
 export async function getRestaurants(): Promise<RestaurantWithCategories[]> {
   "use cache";
   cacheLife("weeks");
-  cacheTag("restaurants");
+  cacheTag(CACHE_TAG.RESTAURANTS);
 
   try {
     const result = await db.query.restaurants.findMany({
@@ -56,6 +52,10 @@ export async function getRestaurants(): Promise<RestaurantWithCategories[]> {
  * レストラン1件を取得（カテゴリ情報含む）
  */
 export async function getRestaurantById(id: string): Promise<RestaurantWithCategories | null> {
+  "use cache";
+  cacheLife("weeks");
+  cacheTag(CACHE_TAG.RESTAURANTS);
+
   try {
     const result = await db.query.restaurants.findFirst({
       where: eq(restaurants.id, id),
@@ -125,7 +125,7 @@ export async function createRestaurant(
     );
 
     // キャッシュを再検証
-    revalidateOnRestaurantCreate();
+    updateTag(CACHE_TAG.RESTAURANTS);
 
     return {
       success: true,
@@ -195,7 +195,7 @@ export async function updateRestaurant(
     );
 
     // キャッシュを再検証
-    revalidateOnRestaurantUpdate(id);
+    updateTag(CACHE_TAG.RESTAURANTS);
 
     return {
       success: true,
@@ -231,7 +231,7 @@ export async function toggleRestaurantActive(id: string, isActive: boolean): Pro
     }
 
     // キャッシュを再検証
-    revalidateOnRestaurantToggleActive();
+    updateTag(CACHE_TAG.RESTAURANTS);
 
     return {
       success: true,
@@ -249,6 +249,10 @@ export async function toggleRestaurantActive(id: string, isActive: boolean): Pro
  * 閉店したレストラン一覧を取得
  */
 export async function getClosedRestaurants(): Promise<RestaurantWithCategories[]> {
+  "use cache";
+  cacheLife("weeks");
+  cacheTag(CACHE_TAG.RESTAURANTS);
+
   try {
     const result = await db.query.restaurants.findMany({
       where: eq(restaurants.isActive, false),
@@ -297,7 +301,7 @@ export async function deleteRestaurantPermanently(id: string): Promise<Restauran
     });
 
     // キャッシュを再検証
-    revalidateOnRestaurantToggleActive();
+    updateTag(CACHE_TAG.RESTAURANTS);
 
     return {
       success: true,

@@ -1,10 +1,11 @@
 "use server";
 
 import { and, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 import { db } from "@/db/db";
 import { favorites } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { CACHE_TAG } from "@/lib/cache-tags";
 
 /**
  * お気に入り操作の結果型
@@ -43,7 +44,7 @@ export async function toggleFavorite(restaurantId: string): Promise<FavoriteActi
       // お気に入りから削除
       await db.delete(favorites).where(and(eq(favorites.userId, userId), eq(favorites.restaurantId, restaurantId)));
 
-      revalidatePath("/");
+      updateTag(CACHE_TAG.RESTAURANTS);
 
       return {
         success: true,
@@ -57,7 +58,7 @@ export async function toggleFavorite(restaurantId: string): Promise<FavoriteActi
       restaurantId,
     });
 
-    revalidatePath("/");
+    updateTag(CACHE_TAG.RESTAURANTS);
 
     return {
       success: true,

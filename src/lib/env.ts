@@ -22,6 +22,9 @@ const env = {
   // App Configuration
   APP_NAME: process.env.APP_NAME || "Hacchobori App",
   APP_URL: process.env.APP_URL || "http://localhost:3000",
+
+  // Email Domain Restriction
+  NEXT_PUBLIC_ALLOWED_EMAIL_DOMAIN: process.env.NEXT_PUBLIC_ALLOWED_EMAIL_DOMAIN || "@example.com",
 } as const;
 
 // Validation for required environment variables - DISABLED for local development
@@ -31,21 +34,21 @@ function _validateEnv() {
   // Temporarily disabled for local development without DB/auth
   // TODO: Re-enable when setting up production deployment
   /*
-	const missing = requiredEnvVars.filter((key) => !env[key]);
+  const missing = requiredEnvVars.filter((key) => !env[key]);
 
-	if (missing.length > 0) {
-		console.warn(
-			`Missing required environment variables: ${missing.join(", ")}`,
-		);
-		console.warn("Please check your .env.local file");
+  if (missing.length > 0) {
+    console.warn(
+      `Missing required environment variables: ${missing.join(", ")}`,
+    );
+    console.warn("Please check your .env.local file");
 
-		if (process.env.NODE_ENV === "production") {
-			throw new Error(
-				`Missing required environment variables: ${missing.join(", ")}`,
-			);
-		}
-	}
-	*/
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        `Missing required environment variables: ${missing.join(", ")}`,
+      );
+    }
+  }
+  */
 }
 
 // Validate on import - currently disabled

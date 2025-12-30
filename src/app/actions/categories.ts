@@ -1,17 +1,12 @@
 "use server";
 
 import { count, eq, sql } from "drizzle-orm";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheLife, cacheTag, updateTag } from "next/cache";
 import { db } from "@/db/db";
 import type { Category } from "@/db/schema";
 import { categories, restaurantCategories } from "@/db/schema";
 import { validateAuthWithCompanyEmail } from "@/lib/auth-utils";
-import {
-  revalidateOnCategoryCreate,
-  revalidateOnCategoryDelete,
-  revalidateOnCategoryReorder,
-  revalidateOnCategoryUpdate,
-} from "@/lib/revalidation";
+import { CACHE_TAG } from "@/lib/cache-tags";
 
 /**
  * カテゴリー操作の結果型
@@ -77,8 +72,8 @@ function handlePostgresError(error: unknown, defaultMessage: string): CategoryAc
  */
 export async function getCategoriesWithUsage(): Promise<CategoryWithUsage[]> {
   "use cache";
-  cacheLife("days");
-  cacheTag("categories");
+  cacheLife("weeks");
+  cacheTag(CACHE_TAG.CATEGORIES);
 
   try {
     // カテゴリーごとにレストランとの紐付け数をカウント
@@ -107,6 +102,10 @@ export async function getCategoriesWithUsage(): Promise<CategoryWithUsage[]> {
  * カテゴリー一覧を取得（displayOrder順）
  */
 export async function getCategories(): Promise<Category[]> {
+  "use cache";
+  cacheLife("weeks");
+  cacheTag(CACHE_TAG.CATEGORIES);
+
   try {
     return await db.query.categories.findMany({
       orderBy: [categories.displayOrder],
@@ -161,7 +160,7 @@ export async function createCategory(name: string, slug: string): Promise<Catego
     }
 
     // キャッシュを再検証
-    revalidateOnCategoryCreate();
+    updateTag(CACHE_TAG.CATEGORIES);
 
     return {
       success: true,
@@ -213,7 +212,7 @@ export async function updateCategory(id: string, name: string, slug: string): Pr
     }
 
     // キャッシュを再検証
-    revalidateOnCategoryUpdate();
+    updateTag(CACHE_TAG.CATEGORIES);
 
     return {
       success: true,
@@ -255,7 +254,7 @@ export async function updateCategoryOrder(categoryIds: string[]): Promise<Catego
     }
 
     // キャッシュを再検証
-    revalidateOnCategoryReorder();
+    updateTag(CACHE_TAG.CATEGORIES);
 
     return {
       success: true,
@@ -307,7 +306,7 @@ export async function deleteCategory(id: string): Promise<CategoryActionResult> 
     }
 
     // キャッシュを再検証
-    revalidateOnCategoryDelete();
+    updateTag(CACHE_TAG.CATEGORIES);
 
     return {
       success: true,

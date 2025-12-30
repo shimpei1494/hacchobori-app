@@ -1,0 +1,30 @@
+{
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["next-devtools", "serena", "context7", "playwright", "sequential-thinking"],
+  "permissions": {
+    "allow": [
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "mcp__serena__list_dir",
+      "mcp__serena__activate_project",
+      "mcp__serena__find_file",
+      "mcp__serena__check_onboarding_performed",
+      "mcp__serena__onboarding",
+      "mcp__serena__get_symbols_overview",
+      "mcp__serena__search_for_pattern",
+      "mcp__serena__find_symbol",
+      "mcp__serena__think_about_collected_information",
+      "mcp__next-devtools__init",
+      "mcp__next-devtools__nextjs_docs",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run check:fix:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(node --version:*)",
+      "Bash(npm run build:*)",
+      "Bash(ls:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

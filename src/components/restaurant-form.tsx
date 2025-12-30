@@ -133,8 +133,12 @@ export function RestaurantForm({ categories, initialData, mode = "create" }: Res
 
       if (result.success) {
         toast.success(mode === "edit" ? "レストランを更新しました" : "レストランを追加しました");
-        router.push("/");
+        // TODO 検証用のコードを後で削除する
+        // ページをリロードして最新データを取得（windoow.location.hrefだと最新になる）
+        // window.location.href = "/";
+        // router.pushではキャッシュが残る
         router.refresh();
+        router.push("/");
       } else {
         toast.error(result.error || "エラーが発生しました");
       }

@@ -1,7 +1,7 @@
 "use server";
 
 import { desc, eq } from "drizzle-orm";
-import { cacheLife, cacheTag, updateTag } from "next/cache";
+import { cacheLife, cacheTag, revalidatePath, updateTag } from "next/cache";
 import { db } from "@/db/db";
 import type { NewRestaurant, RestaurantWithCategories } from "@/db/schema";
 import { favorites, restaurantCategories, restaurants } from "@/db/schema";
@@ -126,6 +126,9 @@ export async function createRestaurant(
 
     // キャッシュを再検証
     updateTag(CACHE_TAG.RESTAURANTS);
+    // TODO 検証用のコードを後で削除する
+    // revalidatePath書いても書かなくてもトップページのキャッシュが更新されない
+    revalidatePath("/");
 
     return {
       success: true,
